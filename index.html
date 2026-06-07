@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منصة تقييم حاضنة الذكاء الاصطناعي</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --primary: #4F46E5;
+  --primary-dark: #3730A3;
+  --primary-light: #818CF8;
+  --primary-bg: #EEF2FF;
+  --accent: #0EA5E9;
+  --success: #10B981;
+  --success-bg: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-bg: #FEF3C7;
+  --danger: #EF4444;
+  --danger-bg: #FEE2E2;
+  --bg: #0F1117;
+  --bg2: #161B27;
+  --bg3: #1C2333;
+  --bg4: #232D42;
+  --text: #F1F5F9;
+  --text2: #94A3B8;
+  --text3: #64748B;
+  --border: #2D3748;
+  --border2: #374151;
+  --card: #161B27;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --sidebar-w: 240px;
+  --transition: 0.18s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; right: 0; top: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 200;
+  transition: transform var(--transition);
+}
+
+.sidebar-logo {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.logo-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  background: var(--primary); display: flex;
+  align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.logo-text .logo-title { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.logo-text .logo-sub { font-size: 10px; color: var(--text3); margin-top: 1px; }
+
+.nav { flex: 1; padding: 12px 8px; overflow-y: auto; }
+.nav-section { margin-bottom: 20px; }
+.nav-section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--text3);
+  padding: 0 10px; margin-bottom: 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--text2); font-size: 13px;
+  font-weight: 500; transition: all var(--transition);
+  margin-bottom: 1px;
+}
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active {
+  background: rgba(79,70,229,0.15);
+  color: var(--primary-light);
+  border-right: 2px solid var(--primary);
+  padding-right: 8px;
+}
+.nav-item .ni { font-size: 16px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-badge {
+  margin-right: auto; background: var(--primary);
+  color: white; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 10px; min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-footer {
+  padding: 12px 8px;
+  border-top: 1px solid var(--border);
+}
+.api-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: var(--bg3);
+  border-radius: var(--radius-sm); font-size: 11px; color: var(--text2);
+  cursor: pointer; transition: background var(--transition);
+}
+.api-pill:hover { background: var(--bg4); }
+.api-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--danger); flex-shrink: 0; }
+.api-dot.on { background: var(--success); }
+
+/* ── HAMBURGER ── */
+.hamburger {
+  display: none; position: fixed; top: 12px; right: 12px;
+  z-index: 300; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 8px 10px;
+  cursor: pointer; color: var(--text); font-size: 18px;
+  line-height: 1;
+}
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 199;
+}
+
+/* ── MAIN ── */
+.main {
+  margin-right: var(--sidebar-w);
+  min-height: 100vh;
+  padding: 28px 28px 60px;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 16px;
+  margin-bottom: 24px; flex-wrap: wrap;
+}
+.page-title { font-size: 22px; font-weight: 700; }
+.page-title em {
+  font-style: normal; color: var(--primary-light);
+}
+.page-subtitle { font-size: 13px; color: var(--text3); margin-top: 3px; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.card-title {
+  font-size: 14px; font-weight: 600; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px; color: var(--text);
+}
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  transition: border-color var(--transition);
+}
+.stat-card:hover { border-color: var(--border2); }
+.stat-label { font-size: 11px; color: var(--text3); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.4px; }
+.stat-value { font-size: 28px; font-weight: 700; margin: 6px 0 2px; }
+.stat-value.purple { color: var(--primary-light); }
+.stat-value.cyan   { color: var(--accent); }
+.stat-value.green  { color: var(--success); }
+.stat-value.orange { color: var(--warning); }
+.stat-sub { font-size: 11px; color: var(--text3); }
+
+/* ── GRIDS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ── CHART ── */
+.chart-wrap { position: relative; height: 240px; }
+
+/* ── FORM ── */
+.form-progress {
+  display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap;
+}
+.form-step {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--text3); font-weight: 500;
+}
+.form-step .step-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--bg3); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--text3);
+  flex-shrink: 0;
+}
+.form-step.done .step-dot { background: var(--success); border-color: var(--success); color: white; }
+.form-step.done { color: var(--success); }
+.form-step.current .step-dot { background: var(--primary); border-color: var(--primary); color: white; }
+.form-step.current { color: var(--primary-light); }
+.step-connector { flex: 1; min-width: 20px; height: 1px; background: var(--border); }
+
+.form-section {
+  margin-bottom: 28px; padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.form-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.form-section-title {
+  font-size: 15px; font-weight: 600; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.fs-badge {
+  font-size: 10px; font-weight: 700;
+  background: rgba(79,70,229,0.15); color: var(--primary-light);
+  padding: 2px 8px; border-radius: 10px;
+}
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: span 2; }
+
+.form-label {
+  font-size: 12px; font-weight: 600; color: var(--text2);
+  display: flex; align-items: center; gap: 4px;
+}
+.req { color: var(--danger); font-size: 11px; }
+
+.form-input, .form-select, .form-textarea {
+  background: var(--bg3); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  color: var(--text); font-size: 13px; font-family: inherit;
+  transition: border-color var(--transition), background var(--transition);
+  width: 100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none; border-color: var(--primary); background: var(--bg4);
+}
+.form-input.error, .form-select.error, .form-textarea.error {
+  border-color: var(--danger);
+}
+.form-input.valid, .form-select.valid, .form-textarea.valid {
+  border-color: var(--success);
+}
+.field-error { font-size: 11px; color: var(--danger); margin-top: 2px; display: none; }
+.field-error.show { display: block; }
+
+.form-textarea { resize: vertical; min-height: 90px; }
+.form-select option { background: var(--bg3); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
+
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-option {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border); cursor: pointer;
+  font-size: 13px; color: var(--text2); transition: all var(--transition);
+  background: var(--bg3);
+}
+.radio-option:has(input:checked) {
+  border-color: var(--primary); background: rgba(79,70,229,0.1); color: var(--text);
+}
+.radio-option input { display: none; }
+
+.autosave-bar {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text3);
+  padding: 8px 12px; background: var(--bg3);
+  border-radius: var(--radius-sm); margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.autosave-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); }
+.autosave-dot.saved { background: var(--success); }
+.autosave-dot.saving { background: var(--warning); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ── BUTTONS ── */
+.btn {
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; transition: all var(--transition);
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: inherit; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--primary); color: white;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-secondary {
+  background: var(--bg3); color: var(--text2); border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--bg4); color: var(--text); }
+.btn-success { background: var(--success); color: white; }
+.btn-danger   { background: var(--danger);  color: white; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+/* ── SCORE BADGE ── */
+.score-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 50%;
+  font-size: 13px; font-weight: 800; border: 2px solid;
+}
+.score-badge.excellent { color: var(--success); border-color: var(--success); background: rgba(16,185,129,0.1); }
+.score-badge.good      { color: var(--accent);  border-color: var(--accent);  background: rgba(14,165,233,0.1); }
+.score-badge.fair      { color: var(--warning); border-color: var(--warning); background: rgba(245,158,11,0.1); }
+.score-badge.poor      { color: var(--danger);  border-color: var(--danger);  background: rgba(239,68,68,0.1); }
+
+/* ── DECISION BADGE ── */
+.decision-badge {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.decision-badge.direct      { background: rgba(16,185,129,0.12); color: var(--success); border: 1px solid rgba(16,185,129,0.25); }
+.decision-badge.conditional { background: rgba(14,165,233,0.12); color: var(--accent);  border: 1px solid rgba(14,165,233,0.25); }
+.decision-badge.develop     { background: rgba(245,158,11,0.12); color: var(--warning); border: 1px solid rgba(245,158,11,0.25); }
+.decision-badge.unsuitable  { background: rgba(239,68,68,0.12);  color: var(--danger);  border: 1px solid rgba(239,68,68,0.25); }
+
+/* ── PROGRESS BAR ── */
+.progress-bar { height: 5px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.progress-fill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  transition: width 0.5s ease;
+}
+
+/* ── TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+thead th {
+  text-align: right; padding: 10px 14px;
+  background: var(--bg3); color: var(--text3);
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.4px; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid rgba(45,55,72,0.5); transition: background var(--transition); }
+tbody tr:hover { background: var(--bg3); }
+tbody td { padding: 12px 14px; color: var(--text2); vertical-align: middle; }
+tbody td strong { color: var(--text); }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 2px; background: var(--bg3);
+  padding: 3px; border-radius: var(--radius-sm);
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.tab {
+  padding: 7px 14px; border-radius: 6px; font-size: 12px;
+  font-weight: 600; cursor: pointer; color: var(--text3);
+  transition: all var(--transition); border: none;
+  background: transparent; font-family: inherit;
+}
+.tab.active { background: var(--card); color: var(--text); }
+
+/* ── RANK CARD ── */
+.rank-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  margin-bottom: 8px; cursor: pointer; transition: all var(--transition);
+}
+.rank-card:hover { border-color: var(--primary); }
+.rank-num {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+.rank-num.gold   { background: rgba(251,191,36,0.15); color: #FBBF24; border: 1.5px solid #FBBF24; }
+.rank-num.silver { background: rgba(148,163,184,0.15); color: #94A3B8; border: 1.5px solid #94A3B8; }
+.rank-num.bronze { background: rgba(180,83,9,0.15); color: #B45309; border: 1.5px solid #B45309; }
+.rank-num.other  { background: var(--bg4); color: var(--text3); border: 1.5px solid var(--border); }
+.rank-info { flex: 1; min-width: 0; }
+.rank-info strong { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-info span { font-size: 11px; color: var(--text3); }
+.rank-score { font-size: 20px; font-weight: 800; color: var(--primary-light); flex-shrink: 0; }
+
+/* ── REPORT ── */
+.report-section {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px;
+}
+.report-section h4 {
+  font-size: 13px; font-weight: 600; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.report-section p, .report-section li { font-size: 13px; color: var(--text2); line-height: 1.7; }
+.report-section ul { padding-right: 18px; }
+.report-section li { margin-bottom: 4px; }
+
+/* ── SCORE BREAKDOWN ── */
+.score-breakdown { display: flex; flex-direction: column; gap: 8px; }
+.score-row { display: flex; align-items: center; gap: 10px; }
+.score-row .label { flex: 1; font-size: 12px; color: var(--text2); white-space: nowrap; }
+.score-row .bar { flex: 2; }
+.score-row .val { font-size: 12px; font-weight: 700; color: var(--text); min-width: 30px; text-align: left; }
+
+/* ── ALERTS ── */
+.alert {
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: 12px; margin-bottom: 14px;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.alert-warning { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); color: var(--warning); }
+.alert-info    { background: rgba(79,70,229,0.08);  border: 1px solid rgba(79,70,229,0.25);  color: var(--primary-light); }
+.alert-success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: var(--success); }
+.alert-danger  { background: rgba(239,68,68,0.08);  border: 1px solid rgba(239,68,68,0.25);  color: var(--danger); }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed; bottom: 20px; left: 20px; z-index: 1000;
+  display: flex; flex-direction: column; gap: 6px; pointer-events: none;
+}
+.toast {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; min-width: 240px;
+  animation: toastIn 0.25s ease; display: flex; align-items: center; gap: 8px;
+  pointer-events: all;
+}
+.toast.success { background: var(--success); color: white; }
+.toast.error   { background: var(--danger);  color: white; }
+.toast.info    { background: var(--primary); color: white; }
+.toast.warning { background: var(--warning); color: white; }
+@keyframes toastIn { from { opacity:0; transform:translateX(-16px); } to { opacity:1; transform:translateX(0); } }
+
+/* ── LOADING ── */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(15,17,23,0.8);
+  display: none; align-items: center; justify-content: center;
+  z-index: 900; backdrop-filter: blur(3px);
+}
+.loading-overlay.show { display: flex; }
+.loading-box {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 48px; text-align: center;
+}
+.spinner {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid var(--border); border-top-color: var(--primary);
+  animation: spin 0.7s linear infinite; margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.loading-sub  { font-size: 12px; color: var(--text3); }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text3); }
+.empty-state .ei { font-size: 40px; margin-bottom: 12px; opacity: 0.35; }
+.empty-state h3 { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+.empty-state p  { font-size: 13px; }
+
+/* ── MODAL ── */
+.modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 500;
+  overflow-y: auto; backdrop-filter: blur(2px);
+}
+.modal-inner { max-width: 860px; margin: 32px auto; padding: 16px; }
+
+/* ── COMPARE ── */
+.compare-winner {
+  display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  gap: 12px; margin-bottom: 16px;
+}
+.compare-winner-card {
+  padding: 16px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.compare-winner-card.first { border-color: var(--primary); }
+
+/* ── PRINT ── */
+@media print {
+  .sidebar, .hamburger, .sidebar-overlay, .toast-container,
+  .loading-overlay, .btn-actions, .tabs, .no-print { display: none !important; }
+  .main { margin-right: 0 !important; padding: 0 !important; }
+  .card { border: 1px solid #ccc !important; break-inside: avoid; }
+  .grid-2 { grid-template-columns: 1fr 1fr; }
+  body { background: white !important; color: black !important; }
+  .report-section { background: #f9f9f9 !important; }
+  .report-section p, .report-section li { color: #333 !important; }
+  .page { display: block !important; }
+  .page:not(#page-reports) { display: none !important; }
+  #page-reports { display: block !important; }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  .sidebar { transform: translateX(100%); width: 240px; }
+  .sidebar.open { transform: translateX(0); }
+  .hamburger { display: flex; }
+  .sidebar-overlay.show { display: block; }
+  .main { margin-right: 0; padding: 56px 16px 40px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-group.full { grid-column: span 1; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .page-header { flex-direction: column; }
+  .page-title { font-size: 18px; }
+  .form-progress { display: none; }
+  .compare-winner { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">جاري التحليل الذكي...</div>
+    <div class="loading-sub"  id="loadingSub">يعمل نموذج الذكاء الاصطناعي على تقييم المشروع</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Hamburger -->
+<button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" aria-label="القائمة">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🚀</div>
+    <div class="logo-text">
+      <div class="logo-title">حاضنة AI</div>
+      <div class="logo-sub">منصة التقييم الذكي</div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">
+      <div class="nav-section-label">الرئيسية</div>
+      <div class="nav-item active" onclick="showPage('dashboard')">
+        <span class="ni">📊</span> لوحة التحكم
+      </div>
+      <div class="nav-item" onclick="showPage('add')">
+        <span class="ni">➕</span> إضافة مشروع
+      </div>
+      <div class="nav-item" onclick="showPage('projects')">
+        <span class="ni">📁</span> المشاريع
+        <span class="nav-badge" id="projectsBadge">0</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">التحليل</div>
+      <div class="nav-item" onclick="showPage('rankings')">
+        <span class="ni">🏆</span> التصنيفات
+      </div>
+      <div class="nav-item" onclick="showPage('compare')">
+        <span class="ni">⚖️</span> المقارنة
+      </div>
+      <div class="nav-item" onclick="showPage('reports')">
+        <span class="ni">📋</span> التقارير
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">النظام</div>
+      <div class="nav-item" onclick="showPage('settings')">
+        <span class="ni">⚙️</span> الإعدادات
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="api-pill" onclick="showPage('settings')">
+      <div class="api-dot" id="apiDot"></div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:11px" id="apiStatusText">Claude API</div>
+        <div style="font-size:10px;color:var(--text3)" id="apiStatusSub">غير مربوط</div>
+      </div>
+      <span style="font-size:10px;color:var(--text3)">⚙️</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ══════════════════════════════════ MAIN ══════════════════════════════════ -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">لوحة <em>التحكم</em></div>
+        <div class="page-subtitle">نظرة عامة على مشاريع الحاضنة</div>
+      </div>
+      <button class="btn btn-primary" onclick="showPage('add')">➕ إضافة مشروع</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">إجمالي المشاريع</div>
+        <div class="stat-value purple" id="statTotal">0</div>
+        <div class="stat-sub">مشروع مُقيَّم</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">متوسط التقييم</div>
+        <div class="stat-value cyan" id="statAvg">—</div>
+        <div class="stat-sub">من 100 نقطة</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">أعلى تقييم</div>
+        <div class="stat-value green" id="statTop">—</div>
+        <div class="stat-sub" id="statTopName">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">احتضان مباشر</div>
+        <div class="stat-value orange" id="statDirect">0</div>
+        <div class="stat-sub">مشروع جاهز</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-title">🏭 توزيع القطاعات</div>
+        <div class="chart-wrap"><canvas id="sectorChart" role="img" aria-label="مخطط توزيع المشاريع حسب القطاع"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 توزيع المراحل</div>
+        <div class="chart-wrap"><canvas id="stageChart" role="img" aria-label="مخطط توزيع المشاريع حسب المرحلة"></canvas></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🎯 توزيع درجات التقييم</div>
+        <div class="chart-wrap"><canvas id="scoreChart" role="img" aria-label="مخطط توزيع الدرجات"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🥇 أفضل المشاريع</div>
+        <div id="topProjectsList">
+          <div class="empty-state"><div class="ei">📊</div><p>لا توجد بيانات بعد</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD PROJECT -->
+  <div id="page-add" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">إضافة <em>مشروع جديد</em></div>
+        <div class="page-subtitle">أدخل بيانات المشروع للحصول على تقييم ذكي شامل</div>
+      </div>
+    </div>
+
+    <div class="autosave-bar" id="autosaveBar">
+      <div class="autosave-dot" id="autosaveDot"></div>
+      <span id="autosaveText">سيتم الحفظ التلقائي للمسودة كل 30 ثانية</span>
+    </div>
+
+    <!-- Progress -->
+    <div class="form-progress" id="formProgress">
+      <div class="form-step current" data-step="1">
+        <div class="step-dot">1</div> معلومات أساسية
+      </div>
+      <div class="step-connector"></div>
+      <div class="form-step" data-step="2">
+        <div class="step-dot">2</div> السوق والمنافسة
+      </div>
+      <div class="step-connector"></div>
+      <div class="form-step" data-step="3">
+        <div class="step-dot">3</div> التقنية
+      </div>
+      <div class="step-connector"></div>
+      <div class="form-step" data-step="4">
+        <div class="step-dot">4</div> الفريق
+      </div>
+      <div class="step-connector"></div>
+      <div class="form-step" data-step="5">
+        <div class="step-dot">5</div> المالية
+      </div>
+    </div>
+
+    <div class="card">
+      <!-- Section 1 -->
+      <div class="form-section" id="fsec1">
+        <div class="form-section-title">🎯 معلومات المشروع الأساسية <span class="fs-badge">1 / 5</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">اسم المشروع <span class="req">*</span></label>
+            <input type="text" class="form-input" id="f_name" placeholder="مثال: MediBot AI" oninput="validateField(this,'name')">
+            <div class="field-error" id="err_name">اسم المشروع مطلوب</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">القطاع <span class="req">*</span></label>
+            <select class="form-select" id="f_sector" onchange="validateField(this,'sector');updateProgress()">
+              <option value="">اختر القطاع...</option>
+              <option>الصحة والرعاية الطبية</option>
+              <option>التعليم والتدريب</option>
+              <option>المالية والتكنولوجيا المالية</option>
+              <option>التجزئة والتجارة الإلكترونية</option>
+              <option>العقارات والبناء</option>
+              <option>النقل والخدمات اللوجستية</option>
+              <option>الطاقة والبيئة</option>
+              <option>الزراعة والغذاء</option>
+              <option>الترفيه والإعلام</option>
+              <option>السياحة والضيافة</option>
+              <option>الأمن السيبراني</option>
+              <option>الموارد البشرية</option>
+              <option>الحكومة والخدمات العامة</option>
+              <option>أخرى</option>
+            </select>
+            <div class="field-error" id="err_sector">القطاع مطلوب</div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">وصف الفكرة <span class="req">*</span></label>
+            <textarea class="form-textarea" id="f_desc" placeholder="اشرح فكرة مشروعك بإيجاز..." oninput="validateField(this,'desc')"></textarea>
+            <div class="field-error" id="err_desc">وصف الفكرة مطلوب (20 حرف على الأقل)</div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">المشكلة التي يحلها المشروع <span class="req">*</span></label>
+            <textarea class="form-textarea" id="f_problem" placeholder="صف المشكلة بوضوح..." oninput="validateField(this,'problem')"></textarea>
+            <div class="field-error" id="err_problem">وصف المشكلة مطلوب (20 حرف على الأقل)</div>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">الحل المقترح</label>
+            <textarea class="form-textarea" id="f_solution" placeholder="كيف يحل مشروعك هذه المشكلة؟"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="form-section" id="fsec2">
+        <div class="form-section-title">📊 تحليل السوق والمنافسة <span class="fs-badge">2 / 5</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">الفئة المستهدفة</label>
+            <input type="text" class="form-input" id="f_target" placeholder="مثال: الشركات الصغيرة والمتوسطة">
+          </div>
+          <div class="form-group">
+            <label class="form-label">حجم السوق المستهدف</label>
+            <select class="form-select" id="f_marketSize">
+              <option value="">اختر...</option>
+              <option>أقل من 10 مليون دولار</option>
+              <option>10 - 100 مليون دولار</option>
+              <option>100 مليون - 1 مليار دولار</option>
+              <option>أكثر من 1 مليار دولار</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">المنافسون الرئيسيون</label>
+            <textarea class="form-textarea" id="f_competitors" placeholder="اذكر المنافسين الرئيسيين..." style="min-height:75px"></textarea>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">الميزة التنافسية</label>
+            <textarea class="form-textarea" id="f_advantage" placeholder="ما الذي يميزكم عن المنافسين؟" style="min-height:75px"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="form-section" id="fsec3">
+        <div class="form-section-title">🤖 التقنية والذكاء الاصطناعي <span class="fs-badge">3 / 5</span></div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">التقنية المستخدمة</label>
+            <input type="text" class="form-input" id="f_tech" placeholder="مثال: Python, TensorFlow, Cloud APIs...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">هل يستخدم الذكاء الاصطناعي؟</label>
+            <div class="radio-group">
+              <label class="radio-option"><input type="radio" name="usesAI" value="نعم"> نعم ✅</label>
+              <label class="radio-option"><input type="radio" name="usesAI" value="لا"> لا ❌</label>
+              <label class="radio-option"><input type="radio" name="usesAI" value="جزئياً"> جزئياً 🔄</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">نوع الذكاء الاصطناعي</label>
+            <select class="form-select" id="f_aiType">
+              <option value="">اختر...</option>
+              <option>معالجة اللغة الطبيعية (NLP)</option>
+              <option>رؤية حاسوبية (Computer Vision)</option>
+              <option>تعلم الآلة (Machine Learning)</option>
+              <option>التعلم العميق (Deep Learning)</option>
+              <option>نماذج اللغة الكبيرة (LLM)</option>
+              <option>الذكاء الاصطناعي التوليدي</option>
+              <option>تحليل البيانات الذكي</option>
+              <option>متعدد التقنيات</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="form-section" id="fsec4">
+        <div class="form-section-title">👥 الفريق والنمو <span class="fs-badge">4 / 5</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">المرحلة الحالية</label>
+            <select class="form-select" id="f_stage">
+              <option value="">اختر...</option>
+              <option>فكرة (Idea)</option>
+              <option>نموذج أولي (Prototype)</option>
+              <option>MVP</option>
+              <option>بيتا (Beta)</option>
+              <option>إطلاق (Launch)</option>
+              <option>نمو (Growth)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">عدد أعضاء الفريق</label>
+            <select class="form-select" id="f_teamSize">
+              <option value="">اختر...</option>
+              <option>مؤسس واحد</option>
+              <option>2-3 أعضاء</option>
+              <option>4-6 أعضاء</option>
+              <option>7-10 أعضاء</option>
+              <option>أكثر من 10</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">خبرات الفريق والمؤهلات</label>
+            <textarea class="form-textarea" id="f_teamExp" placeholder="صف خبرات أعضاء الفريق ومؤهلاتهم وإنجازاتهم السابقة..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="form-section" id="fsec5">
+        <div class="form-section-title">💰 المؤشرات المالية <span class="fs-badge">5 / 5</span></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">الإيرادات الحالية</label>
+            <select class="form-select" id="f_revenue">
+              <option value="">اختر...</option>
+              <option>لا إيرادات بعد</option>
+              <option>أقل من 50,000 ريال</option>
+              <option>50,000 - 500,000 ريال</option>
+              <option>500,000 - 2,000,000 ريال</option>
+              <option>أكثر من 2,000,000 ريال</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">العملاء الحاليون</label>
+            <select class="form-select" id="f_customers">
+              <option value="">اختر...</option>
+              <option>لا عملاء بعد</option>
+              <option>1-10 عملاء</option>
+              <option>11-50 عميل</option>
+              <option>51-200 عميل</option>
+              <option>أكثر من 200 عميل</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">التمويل السابق</label>
+            <select class="form-select" id="f_prevFunding">
+              <option value="">اختر...</option>
+              <option>لا يوجد تمويل سابق</option>
+              <option>تمويل ذاتي</option>
+              <option>تمويل من الأسرة والأصدقاء</option>
+              <option>منحة حكومية</option>
+              <option>مستثمر ملاك</option>
+              <option>جولة بذرية (Seed)</option>
+              <option>جولة سلسلة A أو أعلى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">المبلغ المطلوب</label>
+            <select class="form-select" id="f_ask">
+              <option value="">اختر...</option>
+              <option>أقل من 500,000 ريال</option>
+              <option>500,000 - 2,000,000 ريال</option>
+              <option>2,000,000 - 10,000,000 ريال</option>
+              <option>10,000,000 - 50,000,000 ريال</option>
+              <option>أكثر من 50,000,000 ريال</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">الأهداف المستقبلية (3-5 سنوات)</label>
+            <textarea class="form-textarea" id="f_goals" placeholder="ما هي أهدافكم وخططكم للنمو؟"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-actions">
+        <button class="btn btn-secondary" onclick="resetForm()">🔄 مسح</button>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitProject()">
+          🤖 تحليل وتقييم المشروع
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div id="page-projects" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">قائمة <em>المشاريع</em></div>
+        <div class="page-subtitle">جميع المشاريع المُقيَّمة</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="exportData()">📥 CSV</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportJSON()">📦 JSON</button>
+        <button class="btn btn-primary btn-sm" onclick="showPage('add')">➕ إضافة</button>
+      </div>
+    </div>
+    <div class="card">
+      <div id="projectsTableWrap">
+        <div class="empty-state"><div class="ei">📁</div><h3>لا توجد مشاريع بعد</h3><p>ابدأ بإضافة مشروعك الأول</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RANKINGS -->
+  <div id="page-rankings" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">التصنيفات <em>والترتيب</em></div>
+        <div class="page-subtitle">ترتيب المشاريع حسب معايير مختلفة</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchRankTab('overall',this)">🏆 الكلي</button>
+      <button class="tab" onclick="switchRankTab('idea',this)">💡 الفكرة</button>
+      <button class="tab" onclick="switchRankTab('team',this)">👥 الفريق</button>
+      <button class="tab" onclick="switchRankTab('market',this)">📊 السوق</button>
+      <button class="tab" onclick="switchRankTab('investment',this)">💰 الاستثمار</button>
+      <button class="tab" onclick="switchRankTab('success',this)">🎯 النجاح</button>
+      <button class="tab" onclick="switchRankTab('risk',this)">⚠️ المخاطر</button>
+      <button class="tab" onclick="switchRankTab('ai',this)">🤖 توافق AI</button>
+    </div>
+    <div class="card" id="rankingsContent">
+      <div class="empty-state"><div class="ei">🏅</div><h3>لا توجد مشاريع</h3><p>أضف مشاريع أولاً</p></div>
+    </div>
+  </div>
+
+  <!-- COMPARE -->
+  <div id="page-compare" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">مقارنة <em>المشاريع</em></div>
+        <div class="page-subtitle">مقارنة تفصيلية مع توصيات الاستثمار</div>
+      </div>
+    </div>
+    <div id="compareContent">
+      <div class="empty-state card"><div class="ei">⚖️</div><h3>أضف مشروعين أو أكثر للمقارنة</h3></div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="page-reports" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">التقارير <em>التفصيلية</em></div>
+        <div class="page-subtitle">تقارير تحليلية شاملة لكل مشروع</div>
+      </div>
+    </div>
+    <div id="reportsContent">
+      <div class="empty-state card"><div class="ei">📋</div><h3>لا توجد تقارير بعد</h3></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="page-settings" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">الإعدادات <em>والتكوين</em></div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">🔑 إعداد Claude API</div>
+        <div class="alert alert-warning" style="margin-bottom:14px">
+          ⚠️ <strong>تنبيه أمني:</strong> مفتاح API يُخزن في متصفحك فقط. لا تستخدم هذه المنصة على أجهزة مشتركة أو عامة.
+        </div>
+        <div class="alert alert-info" style="margin-bottom:14px">
+          ℹ️ احصل على مفتاحك من <strong>console.anthropic.com</strong>
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">مفتاح API</label>
+          <input type="password" class="form-input" id="settingsApiKey" placeholder="sk-ant-api03-...">
+        </div>
+        <div class="form-group" style="margin-bottom:14px">
+          <label class="form-label">النموذج</label>
+          <select class="form-select" id="settingsModel">
+            <option value="claude-opus-4-6">Claude Opus 4 (الأقوى)</option>
+            <option value="claude-sonnet-4-6" selected>Claude Sonnet 4 (موصى به)</option>
+            <option value="claude-haiku-4-5-20251001">Claude Haiku 4 (الأسرع)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="saveApiKey()">💾 حفظ</button>
+          <button class="btn btn-secondary" onclick="testApi()">🧪 اختبار الاتصال</button>
+          <button class="btn btn-danger btn-sm" onclick="clearApiKey()">🗑️ حذف المفتاح</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📊 أوزان التقييم</div>
+        <div class="score-breakdown">
+          <div class="score-row"><div class="label">💡 قوة الفكرة والابتكار</div><div class="val">20%</div></div>
+          <div class="score-row"><div class="label">👥 قوة الفريق</div><div class="val">15%</div></div>
+          <div class="score-row"><div class="label">🇸🇦 ملاءمة السوق السعودي</div><div class="val">15%</div></div>
+          <div class="score-row"><div class="label">📊 حجم السوق</div><div class="val">10%</div></div>
+          <div class="score-row"><div class="label">⚔️ الميزة التنافسية</div><div class="val">10%</div></div>
+          <div class="score-row"><div class="label">💰 فرص الاستثمار</div><div class="val">10%</div></div>
+          <div class="score-row"><div class="label">🎯 احتمالية النجاح</div><div class="val">10%</div></div>
+          <div class="score-row"><div class="label">⚠️ المخاطر (عكسي)</div><div class="val">5%</div></div>
+          <div class="score-row"><div class="label">🤖 توافق حاضنة AI</div><div class="val">5%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">💾 إدارة البيانات</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-secondary" onclick="exportData()">📥 تصدير CSV</button>
+        <button class="btn btn-secondary" onclick="exportJSON()">📦 تصدير JSON</button>
+        <button class="btn btn-danger" onclick="clearAllData()">🗑️ مسح جميع البيانات</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Report Print Modal -->
+<div class="modal" id="reportModal">
+  <div class="modal-inner">
+    <div class="card" id="reportModalContent"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let projects = JSON.parse(localStorage.getItem('ai_incubator_v2') || '[]');
+let apiKey   = localStorage.getItem('ai_incubator_key') || '';
+let model    = localStorage.getItem('ai_incubator_model') || 'claude-sonnet-4-6';
+let autosaveTimer = null;
+
+// Init
+document.getElementById('settingsApiKey').value = apiKey;
+document.getElementById('settingsModel').value  = model;
+updateApiStatus();
+updateBadge();
+
+// ── Sidebar toggle ──
+function toggleSidebar() {
+  const sb  = document.getElementById('sidebar');
+  const ov  = document.getElementById('sidebarOverlay');
+  const open = sb.classList.toggle('open');
+  ov.classList.toggle('show', open);
+}
+
+// ── Navigation ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick')?.includes("'" + id + "'")) n.classList.add('active');
+  });
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'projects')  renderProjectsTable();
+  if (id === 'rankings')  renderRankings('overall');
+  if (id === 'compare')   renderCompare();
+  if (id === 'reports')   renderReports();
+  if (id === 'add')       { loadDraft(); startAutosave(); }
+}
+
+// ── Toast ──
+function toast(msg, type='info') {
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `${icons[type]} ${msg}`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+// ── Loading ──
+function showLoading(t='جاري التحليل...', s='يعمل نموذج الذكاء الاصطناعي') {
+  document.getElementById('loadingText').textContent = t;
+  document.getElementById('loadingSub').textContent  = s;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+
+// ── API ──
+function updateApiStatus() {
+  const dot  = document.getElementById('apiDot');
+  const text = document.getElementById('apiStatusText');
+  const sub  = document.getElementById('apiStatusSub');
+  if (apiKey) {
+    dot.classList.add('on');
+    text.textContent = 'Claude API';
+    sub.textContent  = '✓ مربوط';
+  } else {
+    dot.classList.remove('on');
+    sub.textContent = 'غير مربوط';
+  }
+}
+
+function saveApiKey() {
+  apiKey = document.getElementById('settingsApiKey').value.trim();
+  model  = document.getElementById('settingsModel').value;
+  localStorage.setItem('ai_incubator_key',   apiKey);
+  localStorage.setItem('ai_incubator_model', model);
+  updateApiStatus();
+  toast('تم حفظ الإعدادات', 'success');
+}
+
+function clearApiKey() {
+  if (!confirm('حذف مفتاح API؟')) return;
+  apiKey = '';
+  localStorage.removeItem('ai_incubator_key');
+  document.getElementById('settingsApiKey').value = '';
+  updateApiStatus();
+  toast('تم حذف المفتاح', 'info');
+}
+
+async function testApi() {
+  if (!apiKey) { toast('أدخل مفتاح API أولاً', 'error'); return; }
+  showLoading('اختبار الاتصال...', 'جاري التحقق من مفتاح API');
+  try {
+    await callClaude('قل "اتصال ناجح" فقط.');
+    hideLoading(); toast('✓ الاتصال يعمل بشكل صحيح', 'success');
+  } catch(e) {
+    hideLoading(); toast('فشل: ' + e.message, 'error');
+  }
+}
+
+async function callClaude(prompt) {
+  if (!apiKey) throw new Error('لم يتم إدخال مفتاح API');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model, max_tokens: 4096,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    clearTimeout(timeout);
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `HTTP ${r.status}`);
+    }
+    const data = await r.json();
+    return data.content[0].text;
+  } catch(e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('انتهت مهلة الاتصال (60 ثانية)');
+    throw e;
+  }
+}
+
+// ── Form Validation ──
+const validators = {
+  name:    v => v.trim().length >= 2,
+  sector:  v => v !== '',
+  desc:    v => v.trim().length >= 20,
+  problem: v => v.trim().length >= 20,
+};
+
+function validateField(el, key) {
+  const val   = el.value;
+  const valid = validators[key] ? validators[key](val) : true;
+  const errEl = document.getElementById('err_' + key);
+  if (valid) {
+    el.classList.remove('error'); el.classList.add('valid');
+    if (errEl) errEl.classList.remove('show');
+  } else {
+    el.classList.remove('valid'); el.classList.add('error');
+    if (errEl) errEl.classList.add('show');
+  }
+  updateProgress();
+  return valid;
+}
+
+function validateAll() {
+  const fields = [
+    { el: document.getElementById('f_name'),    key: 'name'    },
+    { el: document.getElementById('f_sector'),  key: 'sector'  },
+    { el: document.getElementById('f_desc'),    key: 'desc'    },
+    { el: document.getElementById('f_problem'), key: 'problem' },
+  ];
+  return fields.every(f => validateField(f.el, f.key));
+}
+
+// ── Form Progress ──
+function updateProgress() {
+  const vals = {
+    name:    document.getElementById('f_name')?.value.trim().length >= 2,
+    sector:  document.getElementById('f_sector')?.value !== '',
+    desc:    document.getElementById('f_desc')?.value.trim().length >= 20,
+    problem: document.getElementById('f_problem')?.value.trim().length >= 20,
+    solution:document.getElementById('f_solution')?.value.trim().length > 0,
+  };
+  const sec2 = document.getElementById('f_target')?.value ||
+               document.getElementById('f_marketSize')?.value;
+  const sec3 = document.getElementById('f_tech')?.value ||
+               document.querySelector('input[name="usesAI"]:checked');
+  const sec4 = document.getElementById('f_stage')?.value ||
+               document.getElementById('f_teamSize')?.value;
+  const sec5 = document.getElementById('f_revenue')?.value ||
+               document.getElementById('f_ask')?.value;
+
+  const steps = [
+    vals.name && vals.sector && vals.desc && vals.problem,
+    !!sec2, !!sec3, !!sec4, !!sec5
+  ];
+
+  document.querySelectorAll('.form-step').forEach((el, i) => {
+    el.classList.remove('done', 'current');
+    if (steps[i]) el.classList.add('done');
+    else { el.classList.add('current'); }
+    // only mark first incomplete as current
+  });
+  // Recompute: mark first incomplete as current
+  let foundCurrent = false;
+  document.querySelectorAll('.form-step').forEach((el, i) => {
+    if (!steps[i] && !foundCurrent) { el.classList.remove('done'); el.classList.add('current'); foundCurrent = true; }
+  });
+}
+
+// ── Auto-save ──
+function startAutosave() {
+  clearInterval(autosaveTimer);
+  autosaveTimer = setInterval(saveDraft, 30000);
+}
+
+function saveDraft() {
+  const dot  = document.getElementById('autosaveDot');
+  const text = document.getElementById('autosaveText');
+  dot.className  = 'autosave-dot saving';
+  text.textContent = 'جاري الحفظ...';
+  const draft = getFormData();
+  localStorage.setItem('ai_incubator_draft', JSON.stringify(draft));
+  setTimeout(() => {
+    dot.className  = 'autosave-dot saved';
+    text.textContent = 'تم الحفظ التلقائي — ' + new Date().toLocaleTimeString('ar');
+  }, 500);
+}
+
+function loadDraft() {
+  const draft = JSON.parse(localStorage.getItem('ai_incubator_draft') || 'null');
+  if (!draft) return;
+  const map = {
+    f_name:f_sector:f_desc:f_problem:f_solution:f_target:f_marketSize:
+    f_competitors:f_advantage:f_tech:f_aiType:f_stage:f_teamSize:
+    f_teamExp:f_revenue:f_customers:f_prevFunding:f_ask:f_goals:
+    ''
+  };
+  // Simple load
+  ['name','sector','desc','problem','solution','target','marketSize','competitors',
+   'advantage','tech','aiType','stage','teamSize','teamExp','revenue','customers',
+   'prevFunding','ask','goals'].forEach(k => {
+    const el = document.getElementById('f_' + k);
+    if (el && draft[k]) el.value = draft[k];
+  });
+  if (draft.usesAI) {
+    const r = document.querySelector(`input[name="usesAI"][value="${draft.usesAI}"]`);
+    if (r) r.checked = true;
+  }
+  document.getElementById('autosaveDot').className = 'autosave-dot saved';
+  document.getElementById('autosaveText').textContent = 'تم استعادة المسودة المحفوظة';
+  updateProgress();
+}
+
+// ── Get Form Data ──
+function getFormData() {
+  return {
+    id: Date.now(),
+    date: new Date().toLocaleDateString('ar-SA'),
+    name:        document.getElementById('f_name').value.trim(),
+    sector:      document.getElementById('f_sector').value,
+    desc:        document.getElementById('f_desc').value.trim(),
+    problem:     document.getElementById('f_problem').value.trim(),
+    solution:    document.getElementById('f_solution').value.trim(),
+    target:      document.getElementById('f_target').value.trim(),
+    marketSize:  document.getElementById('f_marketSize').value,
+    competitors: document.getElementById('f_competitors').value.trim(),
+    advantage:   document.getElementById('f_advantage').value.trim(),
+    tech:        document.getElementById('f_tech').value.trim(),
+    usesAI:      document.querySelector('input[name="usesAI"]:checked')?.value || 'لا',
+    aiType:      document.getElementById('f_aiType').value,
+    stage:       document.getElementById('f_stage').value,
+    teamSize:    document.getElementById('f_teamSize').value,
+    teamExp:     document.getElementById('f_teamExp').value.trim(),
+    revenue:     document.getElementById('f_revenue').value,
+    customers:   document.getElementById('f_customers').value,
+    prevFunding: document.getElementById('f_prevFunding').value,
+    ask:         document.getElementById('f_ask').value,
+    goals:       document.getElementById('f_goals').value.trim()
+  };
+}
+
+function resetForm() {
+  ['f_name','f_desc','f_problem','f_solution','f_target','f_competitors',
+   'f_advantage','f_tech','f_teamExp','f_goals'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('valid','error'); }
+  });
+  ['f_sector','f_marketSize','f_aiType','f_stage','f_teamSize',
+   'f_revenue','f_customers','f_prevFunding','f_ask'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('valid','error'); }
+  });
+  document.querySelectorAll('input[name="usesAI"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+  localStorage.removeItem('ai_incubator_draft');
+  updateProgress();
+  toast('تم مسح النموذج', 'info');
+}
+
+// ── Submit ──
+async function submitProject() {
+  if (!validateAll()) {
+    toast('يرجى ملء الحقول الإلزامية', 'error');
+    document.querySelector('.form-input.error, .form-select.error')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  const data = getFormData();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  showLoading('جاري التحليل الذكي...', 'يعمل Claude AI على دراسة مشروعك');
+  try {
+    const evaluation = apiKey ? await analyzeWithClaude(data) : generateLocalEvaluation(data);
+    if (!apiKey) toast('تم التقييم محلياً — أضف مفتاح Claude API لتحليل أعمق', 'warning');
+    const project = { ...data, evaluation };
+    projects.push(project);
+    save();
+    updateBadge();
+    localStorage.removeItem('ai_incubator_draft');
+    clearInterval(autosaveTimer);
+    resetForm();
+    hideLoading();
+    toast(`تم تقييم "${data.name}" — الدرجة: ${evaluation.totalScore}/100`, 'success');
+    showPage('reports');
+    setTimeout(() => showFullReport(project.id), 300);
+  } catch(e) {
+    hideLoading();
+    toast('خطأ في التحليل: ' + e.message, 'error');
+  }
+  btn.disabled = false;
+}
+
+// ── Claude Analysis ──
+async function analyzeWithClaude(data) {
+  const prompt = `أنت خبير في تقييم الشركات الناشئة في مجال الذكاء الاصطناعي للسوق السعودي.
+قم بتحليل المشروع التالي وأعطني النتيجة بصيغة JSON فقط (بدون أي نص إضافي قبل أو بعد):
+
+- اسم المشروع: ${data.name}
+- القطاع: ${data.sector}
+- وصف الفكرة: ${data.desc}
+- المشكلة: ${data.problem}
+- الحل: ${data.solution}
+- الفئة المستهدفة: ${data.target}
+- حجم السوق: ${data.marketSize}
+- المنافسون: ${data.competitors}
+- الميزة التنافسية: ${data.advantage}
+- التقنية: ${data.tech}
+- يستخدم الذكاء الاصطناعي: ${data.usesAI}
+- نوع الذكاء الاصطناعي: ${data.aiType}
+- مرحلة المشروع: ${data.stage}
+- حجم الفريق: ${data.teamSize}
+- خبرات الفريق: ${data.teamExp}
+- الإيرادات: ${data.revenue}
+- العملاء: ${data.customers}
+- التمويل السابق: ${data.prevFunding}
+- المبلغ المطلوب: ${data.ask}
+- الأهداف: ${data.goals}
+
+أعطني JSON بهذا الشكل:
+{"scores":{"idea":<0-100>,"team":<0-100>,"saudiMarket":<0-100>,"marketSize":<0-100>,"competitive":<0-100>,"investment":<0-100>,"success":<0-100>,"risk":<0-100>,"aiAlignment":<0-100>},"totalScore":<0-100>,"decision":"احتضان مباشر|احتضان مشروط|يحتاج تطوير|غير مناسب حالياً","executiveSummary":"...","ideaStrength":"...","globalComparison":"...","saudiComparison":"...","teamAnalysis":"...","marketAnalysis":"...","successProbability":"...","investmentAttractiveness":"...","risks":"...","scalability":"...","vision2030":"...","aiIncubatorFit":"...","strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"challenges":["..."],"recommendations":["..."]}
+
+الوزن: idea*0.20 + team*0.15 + saudiMarket*0.15 + marketSize*0.10 + competitive*0.10 + investment*0.10 + success*0.10 + (100-risk)*0.05 + aiAlignment*0.05 = totalScore`;
+
+  const response = await callClaude(prompt);
+  const match = response.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('لم يتم الحصول على تقييم صحيح');
+  return JSON.parse(match[0]);
+}
+
+// ── Local Evaluation (fallback) ──
+function generateLocalEvaluation(data) {
+  const s = {};
+  s.idea = Math.min(100, 45 + (data.desc.length>100?10:0) + (data.problem.length>80?10:0) + (data.solution.length>80?10:0) + (data.advantage.length>50?10:0) + (data.usesAI==='نعم'?15:0));
+  const tm = {'مؤسس واحد':5,'2-3 أعضاء':15,'4-6 أعضاء':25,'7-10 أعضاء':30,'أكثر من 10':20};
+  s.team = Math.min(100, 35 + (tm[data.teamSize]||0) + (data.teamExp.length>100?20:0));
+  s.saudiMarket = Math.min(100, 50 + (['الصحة','التعليم','المالية','العقارات','السياحة','الحكومة'].some(x=>data.sector.includes(x))?20:0) + (data.target.length>20?15:0));
+  const ms = {'أقل من 10':30,'10 - 100':55,'100 مليون':75,'أكثر من 1':90};
+  s.marketSize = Object.keys(ms).find(k=>data.marketSize?.includes(k)) ? ms[Object.keys(ms).find(k=>data.marketSize?.includes(k))] : 45;
+  s.competitive = Math.min(100, 45 + (data.advantage.length>80?30:0) + (data.competitors.length>30?10:0));
+  s.investment = Math.min(100, 40 + ({'لا إيرادات':0,'أقل من 50':10,'50,000 - 500':20,'500,000 - 2':30,'أكثر من 2':40}[Object.keys({'لا إيرادات':0,'أقل من 50':10,'50,000 - 500':20,'500,000 - 2':30,'أكثر من 2':40}).find(k=>data.revenue?.includes(k))]||0) + ({'لا عملاء':0,'1-10':10,'11-50':20,'51-200':30,'أكثر من 200':40}[Object.keys({'لا عملاء':0,'1-10':10,'11-50':20,'51-200':30,'أكثر من 200':40}).find(k=>data.customers?.includes(k))]||0));
+  s.success = Math.min(100, 40 + (data.stage?.match(/MVP|بيتا|إطلاق|نمو/)?20:0) + (data.prevFunding&&!data.prevFunding.includes('لا يوجد')?15:0) + (data.goals.length>80?10:0));
+  s.risk = Math.min(100, 40 + (data.stage?.includes('فكرة')?20:0) + (data.teamSize==='مؤسس واحد'?15:0) + (!data.prevFunding||data.prevFunding.includes('لا يوجد')?10:0));
+  s.aiAlignment = data.usesAI==='نعم' ? 90 : data.usesAI==='جزئياً' ? 60 : 30;
+
+  const total = Math.round(s.idea*.20 + s.team*.15 + s.saudiMarket*.15 + s.marketSize*.10 + s.competitive*.10 + s.investment*.10 + s.success*.10 + (100-s.risk)*.05 + s.aiAlignment*.05);
+  const decision = total>=75?'احتضان مباشر':total>=60?'احتضان مشروط':total>=45?'يحتاج تطوير':'غير مناسب حالياً';
+
+  return { scores:s, totalScore:total, decision,
+    executiveSummary:`مشروع "${data.name}" في قطاع ${data.sector} يحصل على تقييم إجمالي ${total}/100. هذا تقييم محلي بدون Claude API.`,
+    ideaStrength:'تحليل يعتمد على بيانات المشروع. لتحليل أعمق أضف مفتاح Claude API.',
+    globalComparison:'يحتاج Claude API.',saudiComparison:'يحتاج Claude API.',
+    teamAnalysis:`فريق ${data.teamSize||'غير محدد'} — ${data.teamExp||'لم تُحدد خبرات.'}`,
+    marketAnalysis:`السوق: ${data.marketSize||'غير محدد'}. الفئة: ${data.target||'غير محددة'}.`,
+    successProbability:`${s.success}% بناءً على المرحلة والتمويل والعملاء.`,
+    investmentAttractiveness:`${s.investment}/100 بناءً على الإيرادات والعملاء.`,
+    risks:'المخاطر تشمل: مرحلة المشروع المبكرة وحجم الفريق والمنافسة.',
+    scalability:'تعتمد على نموذج العمل والتقنية المستخدمة.',
+    vision2030:`قطاع ${data.sector} — التوافق يتطلب تحليلاً أعمق.`,
+    aiIncubatorFit:`المشروع ${data.usesAI==='نعم'?'يستخدم':'لا يستخدم'} الذكاء الاصطناعي.`,
+    strengths:[data.advantage||'ميزة تنافسية',data.usesAI==='نعم'?'يستخدم الذكاء الاصطناعي':'فكرة واضحة','إمكانية نمو'].filter(Boolean),
+    weaknesses:[data.stage?.includes('فكرة')?'مرحلة مبكرة':'يحتاج بيانات أكثر',data.teamSize==='مؤسس واحد'?'مؤسس فردي':'يحتاج تعزيز'],
+    opportunities:['نمو سوق الذكاء الاصطناعي في السعودية','رؤية 2030','سوق ناشئ بفرص واعدة'],
+    challenges:['المنافسة المتزايدة','جذب المواهب التقنية'],
+    recommendations:['بناء MVP قوي','توسيع الفريق','التقدم لتمويل حكومي','بناء شراكات محلية']
+  };
+}
+
+// ── Helpers ──
+function save() { localStorage.setItem('ai_incubator_v2', JSON.stringify(projects)); }
+function scoreClass(s) { return s>=75?'excellent':s>=60?'good':s>=45?'fair':'poor'; }
+function decisionClass(d) {
+  if (d==='احتضان مباشر') return 'direct';
+  if (d==='احتضان مشروط') return 'conditional';
+  if (d==='يحتاج تطوير')  return 'develop';
+  return 'unsuitable';
+}
+function updateBadge() {
+  document.getElementById('projectsBadge').textContent = projects.length;
+  document.getElementById('statTotal').textContent     = projects.length;
+}
+function rankNum(i) {
+  const c = i===0?'gold':i===1?'silver':i===2?'bronze':'other';
+  return `<div class="rank-num ${c}">${i+1}</div>`;
+}
+
+// ── Charts ──
+let charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display:false } },
+  scales: {
+    x: { ticks:{color:'#64748B',font:{size:11}}, grid:{color:'rgba(45,55,72,0.4)'} },
+    y: { ticks:{color:'#64748B',stepSize:1},     grid:{color:'rgba(45,55,72,0.4)'} }
+  }
+};
+
+// ── Dashboard ──
+function renderDashboard() {
+  updateBadge();
+  if (!projects.length) {
+    ['statAvg','statTop','statTopName','statDirect'].forEach(id => document.getElementById(id).textContent='—');
+    document.getElementById('topProjectsList').innerHTML = `<div class="empty-state"><div class="ei">📊</div><p>لا توجد بيانات بعد</p></div>`;
+    return;
+  }
+  const scores = projects.map(p=>p.evaluation?.totalScore||0);
+  const avg    = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+  const best   = projects.reduce((a,b)=>(a.evaluation?.totalScore||0)>(b.evaluation?.totalScore||0)?a:b);
+  const direct = projects.filter(p=>p.evaluation?.decision==='احتضان مباشر').length;
+
+  document.getElementById('statAvg').textContent     = avg;
+  document.getElementById('statTop').textContent     = best.evaluation?.totalScore||'—';
+  document.getElementById('statTopName').textContent = best.name||'—';
+  document.getElementById('statDirect').textContent  = direct;
+
+  // Sector
+  const sectors={};
+  projects.forEach(p=>sectors[p.sector||'أخرى']=(sectors[p.sector||'أخرى']||0)+1);
+  destroyChart('sectorChart');
+  charts['sectorChart'] = new Chart(document.getElementById('sectorChart'), {
+    type:'doughnut',
+    data:{ labels:Object.keys(sectors), datasets:[{data:Object.values(sectors),backgroundColor:['#4F46E5','#0EA5E9','#10B981','#F59E0B','#EF4444','#8B5CF6','#06B6D4','#84CC16'],borderWidth:0}]},
+    options:{ responsive:true,maintainAspectRatio:false,plugins:{ legend:{ position:'right',labels:{color:'#94A3B8',font:{size:11},boxWidth:10}}}}
+  });
+
+  // Stage
+  const stages={};
+  projects.forEach(p=>stages[p.stage||'غير محدد']=(stages[p.stage||'غير محدد']||0)+1);
+  destroyChart('stageChart');
+  charts['stageChart'] = new Chart(document.getElementById('stageChart'), {
+    type:'bar',
+    data:{ labels:Object.keys(stages), datasets:[{data:Object.values(stages),backgroundColor:'rgba(79,70,229,0.7)',borderRadius:4,borderWidth:0}]},
+    options:{ ...chartDefaults, scales:{...chartDefaults.scales,y:{...chartDefaults.scales.y,ticks:{color:'#64748B',stepSize:1}}} }
+  });
+
+  // Score dist
+  const bins=[0,0,0,0];
+  scores.forEach(s=>{if(s>=75)bins[0]++;else if(s>=60)bins[1]++;else if(s>=45)bins[2]++;else bins[3]++;});
+  destroyChart('scoreChart');
+  charts['scoreChart'] = new Chart(document.getElementById('scoreChart'), {
+    type:'bar',
+    data:{ labels:['ممتاز 75+','جيد 60-74','مقبول 45-59','ضعيف <45'], datasets:[{data:bins,backgroundColor:['rgba(16,185,129,.7)','rgba(14,165,233,.7)','rgba(245,158,11,.7)','rgba(239,68,68,.7)'],borderRadius:4,borderWidth:0}]},
+    options:{ ...chartDefaults }
+  });
+
+  // Top 5
+  const sorted=[...projects].sort((a,b)=>(b.evaluation?.totalScore||0)-(a.evaluation?.totalScore||0)).slice(0,5);
+  document.getElementById('topProjectsList').innerHTML = sorted.map((p,i)=>`
+    <div class="rank-card" onclick="quickReport(${p.id})">
+      ${rankNum(i)}
+      <div class="rank-info">
+        <strong>${p.name}</strong>
+        <span>${p.sector||''} · ${p.evaluation?.decision||''}</span>
+      </div>
+      <div class="rank-score">${p.evaluation?.totalScore||0}</div>
+    </div>`).join('');
+}
+
+// ── Projects Table ──
+function renderProjectsTable() {
+  const wrap = document.getElementById('projectsTableWrap');
+  if (!projects.length) {
+    wrap.innerHTML='<div class="empty-state"><div class="ei">📁</div><h3>لا توجد مشاريع</h3></div>'; return;
+  }
+  const sorted=[...projects].sort((a,b)=>(b.evaluation?.totalScore||0)-(a.evaluation?.totalScore||0));
+  wrap.innerHTML=`<div class="table-wrap"><table>
+    <thead><tr>
+      <th>#</th><th>الاسم</th><th>القطاع</th><th>المرحلة</th>
+      <th>التقييم</th><th>الفكرة</th><th>الفريق</th><th>السوق</th>
+      <th>القرار</th><th>إجراءات</th>
+    </tr></thead>
+    <tbody>${sorted.map((p,i)=>{
+      const ev=p.evaluation||{};const sc=ev.scores||{};
+      return`<tr>
+        <td>${i+1}</td>
+        <td><strong>${p.name}</strong><br><span style="font-size:11px;color:var(--text3)">${p.date}</span></td>
+        <td>${p.sector||'—'}</td>
+        <td>${p.stage||'—'}</td>
+        <td><div class="score-badge ${scoreClass(ev.totalScore||0)}">${ev.totalScore||0}</div></td>
+        <td>${sc.idea||'—'}</td><td>${sc.team||'—'}</td><td>${sc.saudiMarket||'—'}</td>
+        <td><span class="decision-badge ${decisionClass(ev.decision)}">${ev.decision||'—'}</span></td>
+        <td style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="quickReport(${p.id})">📋</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+
+// ── Rankings ──
+function switchRankTab(key,btn) {
+  document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderRankings(key);
+}
+function renderRankings(key) {
+  const wrap=document.getElementById('rankingsContent');
+  if (!projects.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🏅</div><h3>لا توجد مشاريع</h3></div>';return;}
+  const getVal=(p)=>{
+    const s=p.evaluation?.scores||{};
+    return {overall:p.evaluation?.totalScore||0,idea:s.idea||0,team:s.team||0,market:s.saudiMarket||0,investment:s.investment||0,success:s.success||0,risk:s.risk||0,ai:s.aiAlignment||0}[key]||0;
+  };
+  const sorted=[...projects].sort((a,b)=>key==='risk'?getVal(a)-getVal(b):getVal(b)-getVal(a));
+  const labels={overall:'التقييم الكلي',idea:'قوة الفكرة',team:'قوة الفريق',market:'ملاءمة السوق السعودي',investment:'فرص الاستثمار',success:'احتمالية النجاح',risk:'المخاطر (أقل=أفضل)',ai:'توافق حاضنة AI'};
+  wrap.innerHTML=`<div style="font-size:13px;color:var(--text3);margin-bottom:14px">ترتيب حسب: <strong style="color:var(--text)">${labels[key]}</strong></div>
+    ${sorted.map((p,i)=>{
+      const v=getVal(p);
+      return`<div class="rank-card" onclick="quickReport(${p.id})">
+        ${rankNum(i)}
+        <div class="rank-info"><strong>${p.name}</strong><span>${p.sector||''}</span></div>
+        <div style="flex:2;margin:0 12px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:3px"><span>${labels[key]}</span><span>${v}/100</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${v}%"></div></div>
+        </div>
+        <div class="rank-score">${v}</div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ── Compare ──
+function renderCompare() {
+  const wrap=document.getElementById('compareContent');
+  if (projects.length<2){wrap.innerHTML='<div class="empty-state card"><div class="ei">⚖️</div><h3>أضف مشروعين أو أكثر</h3></div>';return;}
+  const sorted=[...projects].sort((a,b)=>(b.evaluation?.totalScore||0)-(a.evaluation?.totalScore||0));
+  const metrics=[
+    {k:'totalScore',l:'التقييم الكلي',e:true},
+    {k:'idea',l:'قوة الفكرة'},{k:'team',l:'قوة الفريق'},
+    {k:'saudiMarket',l:'السوق السعودي'},{k:'marketSize',l:'حجم السوق'},
+    {k:'competitive',l:'الميزة التنافسية'},{k:'investment',l:'فرص الاستثمار'},
+    {k:'success',l:'احتمالية النجاح'},{k:'risk',l:'المخاطر'},{k:'aiAlignment',l:'توافق AI'},
+  ];
+  const get=(p,m)=>m.e?p.evaluation?.[m.k]||0:p.evaluation?.scores?.[m.k]||0;
+  const best=sorted[0];
+  wrap.innerHTML=`
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">🥇 توصية الاستثمار</div>
+      <div class="compare-winner">
+        ${sorted.slice(0,3).map((p,i)=>`
+          <div class="compare-winner-card ${i===0?'first':''}">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:4px">المرتبة ${i+1}</div>
+            <div style="font-size:15px;font-weight:700;margin-bottom:2px">${p.name}</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${p.sector}</div>
+            <div style="font-size:26px;font-weight:800;color:var(--primary-light)">${p.evaluation?.totalScore||0}<span style="font-size:12px;color:var(--text3)">/100</span></div>
+            <span class="decision-badge ${decisionClass(p.evaluation?.decision)}">${p.evaluation?.decision||'—'}</span>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:14px;padding:12px;background:var(--bg3);border-radius:var(--radius-sm);font-size:12px;color:var(--text2)">
+        المشروع الأفضل: <strong style="color:var(--accent)">${best.name}</strong> (${best.evaluation?.totalScore}/100 — ${best.evaluation?.decision})
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 مقارنة تفصيلية</div>
+      <div class="table-wrap"><table style="min-width:${sorted.length*120+200}px">
+        <thead><tr><th>المعيار</th>${sorted.map(p=>`<th>${p.name}</th>`).join('')}</tr></thead>
+        <tbody>${metrics.map(m=>{
+          const vals=sorted.map(p=>get(p,m));
+          const maxVal=Math.max(...vals);
+          return`<tr><td><strong>${m.l}</strong></td>${sorted.map((p,i)=>{
+            const v=vals[i];const isBest=v===maxVal&&maxVal>0;
+            return`<td style="text-align:center">
+              <div style="font-size:16px;font-weight:700;color:${isBest?'var(--success)':'var(--text2)'}">${v}</div>
+              <div class="progress-bar" style="margin-top:3px"><div class="progress-fill" style="width:${v}%;background:${isBest?'var(--success)':''}"></div></div>
+            </td>`;}).join('')}</tr>`;}).join('')}
+          <tr style="border-top:2px solid var(--primary)"><td><strong>القرار</strong></td>${sorted.map(p=>`<td style="text-align:center"><span class="decision-badge ${decisionClass(p.evaluation?.decision)}">${p.evaluation?.decision||'—'}</span></td>`).join('')}</tr>
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+// ── Reports ──
+function renderReports() {
+  const wrap=document.getElementById('reportsContent');
+  if (!projects.length){wrap.innerHTML='<div class="empty-state card"><div class="ei">📋</div><h3>لا توجد تقارير</h3></div>';return;}
+  const sorted=[...projects].sort((a,b)=>(b.evaluation?.totalScore||0)-(a.evaluation?.totalScore||0));
+  wrap.innerHTML=`
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">اختر مشروعاً</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${sorted.map(p=>`<button class="btn btn-secondary" onclick="showFullReport(${p.id})">
+          📋 ${p.name}
+          <span style="background:${p.evaluation?.totalScore>=75?'var(--success)':p.evaluation?.totalScore>=60?'var(--accent)':p.evaluation?.totalScore>=45?'var(--warning)':'var(--danger)'};color:white;padding:1px 6px;border-radius:10px;font-size:10px">${p.evaluation?.totalScore||0}</span>
+        </button>`).join('')}
+      </div>
+    </div>
+    <div id="fullReportArea"></div>`;
+}
+
+function quickReport(id) { showPage('reports'); setTimeout(()=>showFullReport(id),200); }
+
+function showFullReport(id) {
+  const p=projects.find(x=>x.id===id);
+  if (!p) return;
+  const ev=p.evaluation||{};const sc=ev.scores||{};
+  const area=document.getElementById('fullReportArea');
+  if (!area) return;
+  area.innerHTML=`
+    <div class="card" id="printTarget">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:20px;font-weight:700;margin-bottom:3px">${p.name}</div>
+          <div style="font-size:12px;color:var(--text2)">${p.sector} · ${p.stage||''} · ${p.date}</div>
+        </div>
+        <div style="text-align:center">
+          <div class="score-badge ${scoreClass(ev.totalScore||0)}" style="width:58px;height:58px;font-size:18px">${ev.totalScore||0}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px">/ 100</div>
+        </div>
+        <span class="decision-badge ${decisionClass(ev.decision)}" style="font-size:13px;padding:6px 16px">${ev.decision||'—'}</span>
+        <div class="no-print" style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ طباعة / PDF</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">🗑️ حذف</button>
+        </div>
+      </div>
+
+      <!-- Scores -->
+      <div class="report-section" style="margin-bottom:16px">
+        <h4>📊 تفاصيل الدرجات</h4>
+        <div class="score-breakdown">
+          ${[{k:'idea',l:'💡 قوة الفكرة (20%)'},{k:'team',l:'👥 قوة الفريق (15%)'},{k:'saudiMarket',l:'🇸🇦 السوق السعودي (15%)'},{k:'marketSize',l:'📊 حجم السوق (10%)'},{k:'competitive',l:'⚔️ الميزة التنافسية (10%)'},{k:'investment',l:'💰 فرص الاستثمار (10%)'},{k:'success',l:'🎯 احتمالية النجاح (10%)'},{k:'risk',l:'⚠️ المخاطر (5% - أقل أفضل)'},{k:'aiAlignment',l:'🤖 توافق AI (5%)'}].map(m=>`
+          <div class="score-row">
+            <div class="label">${m.l}</div>
+            <div class="bar"><div class="progress-bar"><div class="progress-fill" style="width:${sc[m.k]||0}%"></div></div></div>
+            <div class="val">${sc[m.k]||0}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="report-section">
+        <h4>📝 الملخص التنفيذي</h4>
+        <p>${ev.executiveSummary||'—'}</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="report-section"><h4 style="color:var(--success)">✅ نقاط القوة</h4><ul>${(ev.strengths||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+        <div class="report-section"><h4 style="color:var(--danger)">❌ نقاط الضعف</h4><ul>${(ev.weaknesses||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+        <div class="report-section"><h4 style="color:var(--accent)">🚀 الفرص</h4><ul>${(ev.opportunities||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+        <div class="report-section"><h4 style="color:var(--warning)">⚡ التحديات</h4><ul>${(ev.challenges||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="report-section"><h4>💡 قوة الفكرة</h4><p>${ev.ideaStrength||'—'}</p></div>
+        <div class="report-section"><h4>🌍 مقارنة عالمية</h4><p>${ev.globalComparison||'—'}</p></div>
+        <div class="report-section"><h4>🇸🇦 مقارنة سعودية</h4><p>${ev.saudiComparison||'—'}</p></div>
+        <div class="report-section"><h4>👥 تحليل الفريق</h4><p>${ev.teamAnalysis||'—'}</p></div>
+        <div class="report-section"><h4>📊 تحليل السوق</h4><p>${ev.marketAnalysis||'—'}</p></div>
+        <div class="report-section"><h4>🎯 احتمالية النجاح</h4><p>${ev.successProbability||'—'}</p></div>
+        <div class="report-section"><h4>💰 الجاذبية الاستثمارية</h4><p>${ev.investmentAttractiveness||'—'}</p></div>
+        <div class="report-section"><h4>⚠️ المخاطر</h4><p>${ev.risks||'—'}</p></div>
+        <div class="report-section"><h4>📈 قابلية التوسع</h4><p>${ev.scalability||'—'}</p></div>
+        <div class="report-section"><h4>🇸🇦 توافق رؤية 2030</h4><p>${ev.vision2030||'—'}</p></div>
+      </div>
+
+      <div class="report-section" style="border-color:var(--primary);background:rgba(79,70,229,0.05)">
+        <h4 style="color:var(--primary-light)">💎 التوصيات</h4>
+        <ul>${(ev.recommendations||[]).map(s=>`<li>${s}</li>`).join('')}</ul>
+      </div>
+
+      <div style="text-align:center;padding:20px;background:var(--bg3);border-radius:var(--radius-sm);margin-top:14px">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:10px">قرار الاحتضان النهائي</div>
+        <span class="decision-badge ${decisionClass(ev.decision)}" style="font-size:16px;padding:10px 28px">${ev.decision||'—'}</span>
+      </div>
+    </div>`;
+  area.scrollIntoView({behavior:'smooth'});
+}
+
+// ── Delete ──
+function deleteProject(id) {
+  if (!confirm('حذف هذا المشروع نهائياً؟')) return;
+  projects = projects.filter(p=>p.id!==id);
+  save(); updateBadge();
+  renderProjectsTable(); renderReports();
+  toast('تم الحذف','info');
+}
+
+function clearAllData() {
+  if (!confirm('مسح جميع البيانات نهائياً؟')) return;
+  projects=[]; save(); updateBadge();
+  toast('تم مسح البيانات','info');
+}
+
+// ── Export ──
+function exportData() {
+  if (!projects.length){toast('لا توجد بيانات','error');return;}
+  const h=['الاسم','القطاع','المرحلة','التقييم','الفكرة','الفريق','السوق','الاستثمار','النجاح','المخاطر','AI','القرار','التاريخ'];
+  const rows=projects.map(p=>[p.name,p.sector,p.stage,p.evaluation?.totalScore||0,p.evaluation?.scores?.idea||0,p.evaluation?.scores?.team||0,p.evaluation?.scores?.saudiMarket||0,p.evaluation?.scores?.investment||0,p.evaluation?.scores?.success||0,p.evaluation?.scores?.risk||0,p.evaluation?.scores?.aiAlignment||0,p.evaluation?.decision||'',p.date].map(v=>`"${v}"`).join(','));
+  const blob=new Blob(['﻿'+[h.join(','),...rows].join('\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='projects.csv';a.click();
+  toast('تم التصدير','success');
+}
+
+function exportJSON() {
+  if (!projects.length){toast('لا توجد بيانات','error');return;}
+  const blob=new Blob([JSON.stringify(projects,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='projects.json';a.click();
+  toast('تم التصدير','success');
+}
+
+// ── Init ──
+renderDashboard();
+</script>
+</body>
+</html>
