@@ -1277,12 +1277,7 @@ function saveDraft() {
 function loadDraft() {
   const draft = JSON.parse(localStorage.getItem('ai_incubator_draft') || 'null');
   if (!draft) return;
-  const map = {
-    f_name:f_sector:f_desc:f_problem:f_solution:f_target:f_marketSize:
-    f_competitors:f_advantage:f_tech:f_aiType:f_stage:f_teamSize:
-    f_teamExp:f_revenue:f_customers:f_prevFunding:f_ask:f_goals:
-    ''}
-  };
+  
   // Simple load
   ['name','sector','desc','problem','solution','target','marketSize','competitors',
    'advantage','tech','aiType','stage','teamSize','teamExp','revenue','customers',
