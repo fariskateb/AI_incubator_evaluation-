@@ -517,34 +517,83 @@ tbody td strong{color:var(--text)}
   <!-- IMPORT EXCEL -->
   <div id="page-import" class="page">
     <div class="page-header">
-      <div><div class="page-title">استيراد <em>من Excel</em></div><div class="page-subtitle">ارفع ملف Excel واستخرج بيانات المشاريع بالذكاء الاصطناعي</div></div>
+      <div><div class="page-title">استيراد <em>من Excel</em></div><div class="page-subtitle">ارفع ملف Excel — Claude AI يقرأ البيانات ويستخرج تفاصيل المشاريع تلقائياً</div></div>
     </div>
-    <div class="card" style="margin-bottom:16px">
-      <div class="card-title">📤 رفع ملف Excel</div>
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('dropFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-        <div class="dz-icon">📊</div>
-        <h3>اسحب ملف Excel هنا أو انقر للاختيار</h3>
-        <p>يدعم .xlsx و .xls — يتم استخراج بيانات المشاريع تلقائياً بالذكاء الاصطناعي</p>
-      </div>
-      <input type="file" id="dropFileInput" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
-    </div>
-    <div id="importStepMapping" style="display:none">
+
+    <!-- STEP 1: Upload -->
+    <div id="importStep1">
       <div class="card" style="margin-bottom:16px">
-        <div class="card-title">🔍 معاينة البيانات</div>
+        <div class="card-title">📤 رفع ملف Excel</div>
+        <div class="drop-zone" id="dropZone" onclick="document.getElementById('dropFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+          <div class="dz-icon">📊</div>
+          <h3>اسحب ملف Excel هنا أو انقر للاختيار</h3>
+          <p>يدعم .xlsx و .xls — Claude AI يفهم أي تنسيق أو لغة للأعمدة</p>
+        </div>
+        <input type="file" id="dropFileInput" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
+      </div>
+      <div class="card">
+        <div class="card-title">💡 كيف يعمل الاستيراد الذكي؟</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+          <div style="padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
+            <div style="font-size:22px;margin-bottom:8px">📁</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">1. رفع الملف</div>
+            <div style="font-size:12px;color:var(--text3)">ارفع ملف Excel بأي تنسيق أو لغة للأعمدة</div>
+          </div>
+          <div style="padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
+            <div style="font-size:22px;margin-bottom:8px">🤖</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">2. تحليل ذكي</div>
+            <div style="font-size:12px;color:var(--text3)">Claude AI يقرأ كل صف ويستخرج تفاصيل المشروع تلقائياً</div>
+          </div>
+          <div style="padding:14px;background:var(--bg3);border-radius:var(--radius-sm);border:1px solid var(--border)">
+            <div style="font-size:22px;margin-bottom:8px">✅</div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:4px">3. مراجعة وتأكيد</div>
+            <div style="font-size:12px;color:var(--text3)">راجع البيانات المستخرجة ثم أكد الاستيراد دفعةً واحدة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Preview & AI Extract -->
+    <div id="importStep2" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-title">🔍 معاينة الملف</div>
         <div class="import-preview" id="importPreviewTable"></div>
-        <div style="margin-top:12px;font-size:12px;color:var(--text3)" id="importStats"></div>
+        <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div style="font-size:12px;color:var(--text3)" id="importStats"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="aiExtractBtn" onclick="runAIExtraction()">🤖 استخراج ذكي بـ Claude AI</button>
+            <button class="btn btn-secondary" onclick="resetImport()">↩ رفع ملف آخر</button>
+          </div>
+        </div>
+        <div id="noApiWarning" class="alert alert-warning" style="margin-top:12px;margin-bottom:0;display:none">
+          ⚠️ لا يوجد مفتاح Claude API. سيتم الاستيراد بدون استخراج ذكي — قد تكون النتائج أقل دقة. <a onclick="showPage('settings')" style="cursor:pointer;text-decoration:underline">أضف مفتاح API</a>
+        </div>
       </div>
+      <!-- Progress during AI extraction -->
+      <div id="importProgress" style="display:none">
+        <div class="card">
+          <div class="card-title">⏳ جاري الاستخراج الذكي...</div>
+          <div id="progressLog" style="font-size:12px;color:var(--text2);max-height:200px;overflow-y:auto;background:var(--bg3);border-radius:var(--radius-sm);padding:12px;font-family:monospace"></div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center" id="progressText">0 / 0 صفوف</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Review extracted data -->
+    <div id="importStep3" style="display:none">
       <div class="card" style="margin-bottom:16px">
-        <div class="card-title">🤖 ربط الأعمدة بحقول المنصة</div>
-        <div class="alert alert-info">ℹ️ سيحاول الذكاء الاصطناعي ربط أعمدة Excel بحقول المنصة تلقائياً. يمكنك تعديل الربط يدوياً.</div>
-        <div id="mappingContainer"></div>
+        <div class="card-title">📋 مراجعة البيانات المستخرجة</div>
+        <div class="alert alert-info" id="extractSummaryAlert"></div>
+        <div id="extractedProjectsList"></div>
         <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
-          <button class="btn btn-secondary" id="autoMapBtn" onclick="autoMapWithAI()">🤖 ربط ذكي بـ Claude AI</button>
-          <button class="btn btn-primary" onclick="importProjects()">✅ استيراد المشاريع</button>
+          <button class="btn btn-primary" onclick="confirmImport()">✅ تأكيد الاستيراد وتقييم المشاريع</button>
           <button class="btn btn-secondary" onclick="resetImport()">↩ إلغاء</button>
         </div>
       </div>
     </div>
+
+    <!-- STEP 4: Done -->
     <div id="importResult" style="display:none">
       <div class="card">
         <div class="card-title">✅ نتائج الاستيراد</div>
@@ -1015,7 +1064,7 @@ async function analyzeWithClaude(data){
 - الأهداف: ${data.goals}
 
 أعطني JSON بهذا الشكل:
-{"scores":{"idea":<0-100>,"team":<0-100>,"saudiMarket":<0-100>,"marketSize":<0-100>,"competitive":<0-100>,"investment":<0-100>,"success":<0-100>,"risk":<0-100>,"aiAlignment":<0-100>},"totalScore":<0-100>,"decision":"احتضان مباشر|احتضان مشروط|يحتاج تطوير|غير مناسب حالياً","executiveSummary":"...","ideaStrength":"...","globalComparison":"...","saudiComparison":"...","teamAnalysis":"...","marketAnalysis":"...","successProbability":"...","investmentAttractiveness":"...","risks":"...","scalability":"...","vision2030":"...","aiIncubatorFit":"...","strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"challenges":["..."],"recommendations":["..."]}
+{"scores":{"idea":<0-100>,"team":<0-100>,"saudiMarket":<0-100>,"marketSize":<0-100>,"competitive":<0-100>,"investment":<0-100>,"success":<0-100>,"risk":<0-100>,"aiAlignment":<0-100>},"totalScore":<0-100>,"decision":"احتضان مباشر|احتضان مشروط|يحتاج تطوير|غير مناسب حالياً","executiveSummary":"...","ideaStrength":"...","globalComparison":"...","saudiComparison":"...","teamAnalysis":"...","marketAnalysis":"...","successProbability":"...","investmentAttractiveness":"...","risks":"...","scalability":"...","vision2030":"...","aiIncubatorFit":"...","strengths":["..."],"weaknesses":["..."],"opportunities":["..."],"challenges":["..."],"recommendations":["..."],"actionPlan":{"phase1":{"title":"المرحلة الأولى — التأسيس (0-3 أشهر)","tasks":["..."]},"phase2":{"title":"المرحلة الثانية — الإطلاق (3-9 أشهر)","tasks":["..."]},"phase3":{"title":"المرحلة الثالثة — النمو (9-24 شهر)","tasks":["..."]},"kpis":["..."],"milestones":["..."]}}
 
 الوزن: idea*0.20 + team*0.15 + saudiMarket*0.15 + marketSize*0.10 + competitive*0.10 + investment*0.10 + success*0.10 + (100-risk)*0.05 + aiAlignment*0.05 = totalScore`;
   const response=await callClaude(prompt);
@@ -1055,8 +1104,121 @@ function generateLocalEvaluation(data){
     weaknesses:[data.stage?.includes('فكرة')?'مرحلة مبكرة':'يحتاج بيانات أكثر',data.teamSize==='مؤسس واحد'?'مؤسس فردي':'يحتاج تعزيز'],
     opportunities:['نمو سوق الذكاء الاصطناعي في السعودية','رؤية 2030','سوق ناشئ بفرص واعدة'],
     challenges:['المنافسة المتزايدة','جذب المواهب التقنية'],
-    recommendations:['بناء MVP قوي','توسيع الفريق','التقدم لتمويل حكومي','بناء شراكات محلية']
+    recommendations:['بناء MVP قوي','توسيع الفريق','التقدم لتمويل حكومي','بناء شراكات محلية'],
+    actionPlan: generateLocalActionPlan(data, total)
   };
+}
+
+// ════════════════════════════════════════════
+//  LOCAL ACTION PLAN GENERATOR
+// ════════════════════════════════════════════
+function generateLocalActionPlan(data, score) {
+  const isEarly = !data.stage || data.stage.includes('فكرة') || data.stage.includes('Prototype') || data.stage.includes('نموذج');
+  const hasFunding = data.prevFunding && !data.prevFunding.includes('لا يوجد');
+  const usesAI = data.usesAI === 'نعم' || data.usesAI === 'جزئياً';
+  const sector = data.sector || '';
+
+  // Phase 1 tasks — tailored by stage
+  const phase1Tasks = [
+    isEarly ? 'إجراء 20 مقابلة مع عملاء محتملين لاكتشاف الاحتياجات الحقيقية' : 'تحليل بيانات العملاء الحاليين وتحديد نقاط الاحتكاك',
+    isEarly ? 'بناء نموذج أولي (Prototype) قابل للاختبار خلال 6 أسابيع' : 'تحسين المنتج الحالي بناءً على ملاحظات المستخدمين',
+    'تسجيل الشركة وحماية الملكية الفكرية (براءات الاختراع / العلامة التجارية)',
+    data.teamSize === 'مؤسس واحد' ? 'إيجاد شريك مؤسس تقني أو توظيف مطور رئيسي' : 'تحديد أدوار الفريق وإعداد هيكل تنظيمي واضح',
+    usesAI ? 'اختيار نموذج AI المناسب واختباره على بيانات حقيقية' : 'تحديد التقنيات الأساسية وبناء البنية التحتية',
+  ];
+
+  // Phase 2 tasks — tailored by sector & funding
+  const phase2Tasks = [
+    'إطلاق نسخة MVP وجمع أول 50-100 مستخدم تجريبي',
+    hasFunding ? 'استخدام التمويل لتسريع تطوير المنتج وتوظيف الكفاءات' : 'التقدم لبرامج التمويل: صندوق الاستثمارات العامة، Flat6Labs، Wa\'ed Ventures',
+    sector.includes('صح') ? 'الحصول على الموافقات التنظيمية من هيئة الغذاء والدواء' :
+    sector.includes('مالية') ? 'التسجيل لدى ساما والحصول على التراخيص اللازمة' :
+    'بناء شراكات استراتيجية مع 3-5 شركاء رئيسيين في القطاع',
+    'تطوير استراتيجية تسويق رقمي وبناء حضور على منصات التواصل الاجتماعي',
+    'إعداد نموذج تسعير واضح وبدء تحقيق أولى الإيرادات',
+  ];
+
+  // Phase 3 tasks — growth
+  const phase3Tasks = [
+    score >= 70 ? 'رفع جولة استثمارية Series A بعد إثبات نموذج العمل' : 'توسيع قاعدة العملاء والتركيز على الربحية',
+    'التوسع الجغرافي داخل المملكة ثم إلى دول الخليج (الإمارات، الكويت، قطر)',
+    usesAI ? 'تطوير قدرات AI متقدمة وتدريب نماذج مخصصة للسوق العربي' : 'الاستثمار في تطوير المنتج وإضافة ميزات متقدمة',
+    'بناء فريق مبيعات ودعم عملاء متخصص',
+    'الاستعداد لمرحلة الطرح العام أو الاستحواذ الاستراتيجي على المدى البعيد',
+  ];
+
+  // KPIs
+  const kpis = [
+    'عدد المستخدمين النشطين شهرياً (MAU): الهدف 1,000 في السنة الأولى',
+    'معدل الاحتفاظ بالعملاء (Retention): أعلى من 60% بعد 3 أشهر',
+    `الإيرادات الشهرية المتكررة (MRR): ${score>=70?'500,000':score>=50?'100,000':'50,000'} ريال بنهاية السنة الثانية`,
+    'تكلفة اكتساب العميل (CAC): أقل من 500 ريال',
+    'القيمة الإجمالية للعميل (LTV): 3x CAC على الأقل',
+    usesAI ? 'دقة نموذج الذكاء الاصطناعي: أعلى من 90%' : 'رضا العملاء (NPS): أعلى من 50',
+  ];
+
+  // Milestones
+  const milestones = [
+    `الشهر 1: ${isEarly?'تجميع الفريق الأساسي وإنهاء تحليل السوق':'تحديد أولويات المنتج للنصف الأول'}`,
+    `الشهر 3: ${isEarly?'إطلاق أول نموذج قابل للاختبار':'الوصول إلى '+(data.customers?.includes('لا')?'أول 10 عملاء مدفوعين':'مضاعفة قاعدة العملاء الحالية')}`,
+    `الشهر 6: ${hasFunding?'تحقيق الأهداف المحددة للمستثمرين':'إغلاق أول جولة تمويلية (Pre-seed أو Seed)'}`,
+    'الشهر 12: تحقيق Break-even أو الوصول لـ Product-Market Fit المثبت',
+    'الشهر 18: التوسع لسوق خليجي ثانٍ أو إطلاق منتج/خدمة مجاورة',
+    'الشهر 24: تقييم الشركة 10x من قيمة التمويل الأولي',
+  ];
+
+  return {
+    phase1: { title: 'المرحلة الأولى — التأسيس والتحقق (0–3 أشهر)', tasks: phase1Tasks },
+    phase2: { title: 'المرحلة الثانية — البناء والإطلاق (3–9 أشهر)', tasks: phase2Tasks },
+    phase3: { title: 'المرحلة الثالثة — النمو والتوسع (9–24 شهر)', tasks: phase3Tasks },
+    kpis,
+    milestones,
+  };
+}
+
+// ════════════════════════════════════════════
+//  GENERATE ACTION PLAN WITH CLAUDE (on-demand)
+// ════════════════════════════════════════════
+async function generateActionPlanWithClaude(p) {
+  const prompt = `أنت خبير استراتيجي في الشركات الناشئة بالسوق السعودي.
+
+بناءً على بيانات المشروع التالي، ضع خطة عمل تفصيلية ومخصصة:
+- اسم المشروع: ${p.name}
+- القطاع: ${p.sector}
+- الفكرة: ${p.desc}
+- المشكلة: ${p.problem}
+- الحل: ${p.solution}
+- الميزة التنافسية: ${p.advantage}
+- التقنية: ${p.tech}
+- يستخدم AI: ${p.usesAI}
+- المرحلة: ${p.stage}
+- الفريق: ${p.teamSize} — ${p.teamExp}
+- الإيرادات: ${p.revenue}
+- العملاء: ${p.customers}
+- التمويل السابق: ${p.prevFunding}
+- المبلغ المطلوب: ${p.ask}
+- الأهداف: ${p.goals}
+- درجة التقييم: ${p.evaluation?.totalScore}/100
+
+أعطني JSON فقط بهذا الشكل (بدون أي نص قبله أو بعده):
+{
+  "phase1": {"title":"المرحلة الأولى — [اسم مخصص] (0–3 أشهر)","tasks":["مهمة محددة وقابلة للتنفيذ","...","...","...","..."]},
+  "phase2": {"title":"المرحلة الثانية — [اسم مخصص] (3–9 أشهر)","tasks":["...","...","...","...","..."]},
+  "phase3": {"title":"المرحلة الثالثة — [اسم مخصص] (9–24 شهر)","tasks":["...","...","...","...","..."]},
+  "kpis":["مؤشر قياس محدد بأرقام","...","...","...","...","..."],
+  "milestones":["الشهر X: إنجاز محدد","...","...","...","...","..."]
+}
+
+المتطلبات:
+- كل مهمة يجب أن تكون محددة وقابلة للتنفيذ وتناسب هذا المشروع تحديداً
+- الأرقام والأهداف يجب أن تكون واقعية للسوق السعودي
+- ضع في الاعتبار القطاع والمرحلة الحالية للمشروع
+- KPIs يجب أن تحتوي على أرقام محددة وليست عامة`;
+
+  const response = await callClaude(prompt);
+  const match = response.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('لم يتم الحصول على خطة صحيحة');
+  return JSON.parse(match[0]);
 }
 
 // ════════════════════════════════════════════
@@ -1238,12 +1400,91 @@ function showFullReport(id){
       <div class="report-section"><h4>🇸🇦 توافق رؤية 2030</h4><p>${ev.vision2030||'—'}</p></div>
     </div>
     <div class="report-section" style="border-color:var(--primary);background:rgba(79,70,229,0.05)"><h4 style="color:var(--primary-light)">💎 التوصيات</h4><ul>${(ev.recommendations||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    ${renderActionPlanSection(ev.actionPlan, p.id)}
     <div style="text-align:center;padding:20px;background:var(--bg3);border-radius:var(--radius-sm);margin-top:14px">
       <div style="font-size:12px;color:var(--text3);margin-bottom:10px">قرار الاحتضان النهائي</div>
       <span class="decision-badge ${decisionClass(ev.decision)}" style="font-size:16px;padding:10px 28px">${ev.decision||'—'}</span>
     </div>
   </div>`;
   area.scrollIntoView({behavior:'smooth'});
+}
+
+function renderActionPlanSection(ap, projectId) {
+  if (!ap) {
+    return `<div class="report-section" style="border-color:#10b981;background:rgba(16,185,129,0.05)">
+      <h4 style="color:#10b981">🗺️ الخطة المستقبلية</h4>
+      <p style="color:var(--text3);font-size:13px">لم يتم توليد الخطة المستقبلية. أعد التقييم لتوليدها تلقائياً.</p>
+      <button class="btn btn-sm" style="background:#10b981;margin-top:8px" onclick="regenerateActionPlan('${projectId}')">⚡ توليد الخطة الآن</button>
+    </div>`;
+  }
+  const phases = [
+    { key:'phase1', color:'#6366f1', icon:'🚀' },
+    { key:'phase2', color:'#f59e0b', icon:'⚙️' },
+    { key:'phase3', color:'#10b981', icon:'📈' },
+  ];
+  const phasesHtml = phases.map(({key,color,icon}) => {
+    const ph = ap[key]; if(!ph) return '';
+    return `<div style="flex:1;min-width:220px;border:1px solid ${color}40;border-radius:10px;padding:14px;background:${color}08">
+      <div style="font-size:13px;font-weight:700;color:${color};margin-bottom:10px">${icon} ${ph.title}</div>
+      <ul style="margin:0;padding-right:18px;color:var(--text2);font-size:12.5px;line-height:1.8">
+        ${(ph.tasks||[]).map(t=>`<li>${t}</li>`).join('')}
+      </ul>
+    </div>`;
+  }).join('');
+
+  const kpisHtml = (ap.kpis||[]).map(k=>`
+    <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--text2);border-right:3px solid #6366f1">
+      📊 ${k}
+    </div>`).join('');
+
+  const milestonesHtml = (ap.milestones||[]).map((m,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div style="width:28px;height:28px;border-radius:50%;background:#6366f1;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.6;padding-top:4px">${m}</div>
+    </div>`).join('');
+
+  return `<div class="report-section" style="border-color:#10b981;background:rgba(16,185,129,0.03)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <h4 style="color:#10b981;margin:0">🗺️ الخطة المستقبلية</h4>
+      <button class="btn btn-sm" style="background:#10b981;font-size:12px;padding:5px 12px" onclick="regenerateActionPlan('${projectId}')">✨ تحديث بالذكاء الاصطناعي</button>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+      ${phasesHtml}
+    </div>
+
+    ${kpisHtml ? `<div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:600;color:var(--text1);margin-bottom:10px">📐 مؤشرات قياس الأداء (KPIs)</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px">${kpisHtml}</div>
+    </div>` : ''}
+
+    ${milestonesHtml ? `<div>
+      <div style="font-size:13px;font-weight:600;color:var(--text1);margin-bottom:8px">🏁 الإنجازات الرئيسية (Milestones)</div>
+      ${milestonesHtml}
+    </div>` : ''}
+  </div>`;
+}
+
+async function regenerateActionPlan(id) {
+  const p = projects.find(x=>x.id===id); if(!p) return;
+  const btn = event.target; btn.disabled=true; btn.textContent='⏳ جارٍ التوليد...';
+  try {
+    const apiKey = settings.apiKey;
+    let ap;
+    if (apiKey) {
+      ap = await generateActionPlanWithClaude(p);
+    } else {
+      ap = generateLocalActionPlan(p, p.evaluation?.totalScore||50);
+    }
+    p.evaluation = p.evaluation||{};
+    p.evaluation.actionPlan = ap;
+    save();
+    showFullReport(id);
+    toast('تم تحديث الخطة المستقبلية','success');
+  } catch(e) {
+    toast('خطأ في التوليد: '+e.message,'error');
+    btn.disabled=false; btn.textContent='✨ تحديث بالذكاء الاصطناعي';
+  }
 }
 
 // ════════════════════════════════════════════
@@ -1278,32 +1519,11 @@ function exportJSON(){
 }
 
 // ════════════════════════════════════════════
-//  EXCEL IMPORT
+//  EXCEL IMPORT — AI-First Approach
 // ════════════════════════════════════════════
-let excelRows=[];
-let excelHeaders=[];
-
-const FIELD_DEFS=[
-  {key:'name',      label:'اسم المشروع',           required:true},
-  {key:'sector',    label:'القطاع',                required:true},
-  {key:'desc',      label:'وصف الفكرة',            required:true},
-  {key:'problem',   label:'المشكلة المحلولة',       required:true},
-  {key:'solution',  label:'الحل المقترح',           required:false},
-  {key:'target',    label:'الفئة المستهدفة',        required:false},
-  {key:'marketSize',label:'حجم السوق',             required:false},
-  {key:'competitors',label:'المنافسون',            required:false},
-  {key:'advantage', label:'الميزة التنافسية',       required:false},
-  {key:'tech',      label:'التقنية المستخدمة',      required:false},
-  {key:'usesAI',    label:'يستخدم الذكاء الاصطناعي',required:false},
-  {key:'stage',     label:'مرحلة المشروع',          required:false},
-  {key:'teamSize',  label:'حجم الفريق',            required:false},
-  {key:'teamExp',   label:'خبرات الفريق',           required:false},
-  {key:'revenue',   label:'الإيرادات',             required:false},
-  {key:'customers', label:'العملاء',               required:false},
-  {key:'prevFunding',label:'التمويل السابق',        required:false},
-  {key:'ask',       label:'المبلغ المطلوب',         required:false},
-  {key:'goals',     label:'الأهداف المستقبلية',     required:false},
-];
+let excelRows = [];
+let excelHeaders = [];
+let extractedProjects = [];  // results from AI extraction
 
 function handleDragOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('dragover');}
 function handleDragLeave(e){document.getElementById('dropZone').classList.remove('dragover');}
@@ -1329,168 +1549,292 @@ function processExcelFile(file){
       excelHeaders=data[0].map(h=>String(h).trim());
       excelRows=data.slice(1).filter(row=>row.some(cell=>String(cell).trim()!==''));
       hideLoading();
-      showImportMapping();
+      showStep2Preview();
     }catch(err){hideLoading();toast('خطأ في قراءة الملف: '+err.message,'error');}
   };
   reader.readAsArrayBuffer(file);
 }
 
-function showImportMapping(){
-  document.getElementById('importStepMapping').style.display='block';
+function showStep2Preview(){
+  document.getElementById('importStep1').style.display='none';
+  document.getElementById('importStep2').style.display='block';
+  document.getElementById('importStep3').style.display='none';
   document.getElementById('importResult').style.display='none';
-  // Preview table
+  document.getElementById('importProgress').style.display='none';
+
+  // Preview table — first 5 rows
   const preview=excelRows.slice(0,5);
-  const tableHtml=`<table><thead><tr>${excelHeaders.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-    <tbody>${preview.map(row=>`<tr>${excelHeaders.map((_,i)=>`<td>${String(row[i]||'').substring(0,60)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+  const tableHtml=`<table><thead><tr>${excelHeaders.map(h=>`<th title="${h}">${h.length>20?h.substring(0,20)+'…':h}</th>`).join('')}</tr></thead>
+    <tbody>${preview.map(row=>`<tr>${excelHeaders.map((_,i)=>{const v=String(row[i]||'');return`<td title="${v}">${v.length>40?v.substring(0,40)+'…':v||'—'}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`;
   document.getElementById('importPreviewTable').innerHTML=tableHtml;
-  document.getElementById('importStats').textContent=`تم قراءة ${excelRows.length} صف و ${excelHeaders.length} عمود. يتم عرض أول 5 صفوف.`;
-  // Mapping UI
-  buildMappingUI(null);
-  // Auto-map by name similarity
-  quickAutoMap();
+  document.getElementById('importStats').textContent=`${excelRows.length} صف · ${excelHeaders.length} عمود · يتم عرض أول 5 صفوف`;
+
+  // Show warning if no API key
+  const warn=document.getElementById('noApiWarning');
+  warn.style.display=apiKey?'none':'flex';
 }
 
-function buildMappingUI(mapping){
-  const opts=`<option value="">— تجاهل —</option>${excelHeaders.map((h,i)=>`<option value="${i}">${h}</option>`).join('')}`;
-  document.getElementById('mappingContainer').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:4px">
-      <div style="font-size:11px;font-weight:700;color:var(--text3)">حقل المنصة</div>
-      <div></div>
-      <div style="font-size:11px;font-weight:700;color:var(--text3)">عمود Excel</div>
-    </div>
-    ${FIELD_DEFS.map(f=>`<div class="mapping-row">
-      <div class="mapping-col">${f.required?'<span style="color:var(--danger)">* </span>':''}${f.label}</div>
-      <div class="mapping-arrow">←</div>
-      <select class="form-select mapping-sel" id="map_${f.key}" style="font-size:12px">${opts}</select>
-    </div>`).join('')}`;
-  if(mapping){
-    FIELD_DEFS.forEach(f=>{
-      const sel=document.getElementById('map_'+f.key);
-      if(sel&&mapping[f.key]!==undefined) sel.value=mapping[f.key];
-    });
-  }
-}
+// ── AI Extraction: send each row to Claude and parse project fields ──
+async function runAIExtraction(){
+  const btn=document.getElementById('aiExtractBtn');
+  btn.disabled=true;
+  extractedProjects=[];
 
-function quickAutoMap(){
-  // Simple keyword matching
-  const normalize=s=>s.toLowerCase().replace(/[\s_\-\/]+/g,'');
-  const keywordMap={
-    name:['name','اسم','project','مشروع','startup'],
-    sector:['sector','قطاع','industry','مجال','field'],
-    desc:['desc','وصف','description','idea','فكرة'],
-    problem:['problem','مشكلة','challenge','issue'],
-    solution:['solution','حل','answer'],
-    target:['target','مستهدف','audience','segment','فئة'],
-    marketSize:['market','سوق','size','حجم'],
-    competitors:['compet','منافس','rival'],
-    advantage:['advantage','ميزة','unique','differenti'],
-    tech:['tech','تقنية','technology','stack'],
-    usesAI:['ai','ذكاء','artificial','intelligence'],
-    stage:['stage','مرحلة','phase','level'],
-    teamSize:['team','فريق','member','size','عدد'],
-    teamExp:['experience','خبرة','background','qualif'],
-    revenue:['revenue','إيراد','income','sales'],
-    customers:['customer','عميل','client','user'],
-    prevFunding:['fund','تمويل','invest','capital'],
-    ask:['ask','مطلوب','need','request','amount'],
-    goals:['goal','هدف','vision','future','plan'],
+  document.getElementById('importProgress').style.display='block';
+  const log=document.getElementById('progressLog');
+  const bar=document.getElementById('progressBar');
+  const ptext=document.getElementById('progressText');
+
+  const addLog=(msg,color='var(--text2)')=>{
+    log.innerHTML+=`<div style="color:${color};margin-bottom:2px">${msg}</div>`;
+    log.scrollTop=log.scrollHeight;
   };
-  FIELD_DEFS.forEach(f=>{
-    const keywords=keywordMap[f.key]||[];
-    let bestIdx=-1,bestScore=0;
-    excelHeaders.forEach((h,i)=>{
-      const norm=normalize(h);
-      const score=keywords.reduce((acc,kw)=>acc+(norm.includes(normalize(kw))?1:0),0);
-      if(score>bestScore){bestScore=score;bestIdx=i;}
+
+  const total=excelRows.length;
+  addLog(`📊 بدء استخراج ${total} مشروع...`,'var(--primary-light)');
+
+  if(apiKey){
+    // AI-powered: send rows in batches of 3 to save API calls
+    const BATCH=3;
+    for(let i=0;i<total;i+=BATCH){
+      const batch=excelRows.slice(i,i+BATCH);
+      const batchData=batch.map((row,bi)=>{
+        const rowObj={};
+        excelHeaders.forEach((h,hi)=>{ if(String(row[hi]||'').trim()) rowObj[h]=String(row[hi]).trim(); });
+        return{index:i+bi+1,data:rowObj};
+      });
+
+      addLog(`🤖 معالجة الصفوف ${i+1}–${Math.min(i+BATCH,total)}...`);
+      try{
+        const extracted=await extractBatchWithClaude(batchData);
+        extracted.forEach(p=>{
+          if(p&&p.name){
+            extractedProjects.push(p);
+            addLog(`  ✅ "${p.name}" — ${p.sector||'—'}`,'var(--success)');
+          } else {
+            addLog(`  ⚠️ صف ${p?._index||'?'}: لم يتم التعرف على مشروع`,'var(--warning)');
+          }
+        });
+      }catch(err){
+        addLog(`  ❌ خطأ في الدفعة: ${err.message}`,'var(--danger)');
+        // Fallback: extract without AI for this batch
+        batch.forEach((row,bi)=>{
+          const p=fallbackExtract(row,i+bi);
+          if(p){extractedProjects.push(p);addLog(`  ↩️ "${p.name}" (استخراج محلي)`,'var(--text3)');}
+        });
+      }
+
+      const done=Math.min(i+BATCH,total);
+      bar.style.width=(done/total*100)+'%';
+      ptext.textContent=`${done} / ${total} صفوف`;
+      await new Promise(r=>setTimeout(r,200)); // small delay between batches
+    }
+  } else {
+    // No API: use fallback extraction for all rows
+    addLog('⚠️ لا يوجد مفتاح API — الاستخراج بدون ذكاء اصطناعي','var(--warning)');
+    excelRows.forEach((row,i)=>{
+      const p=fallbackExtract(row,i);
+      if(p){
+        extractedProjects.push(p);
+        addLog(`  ↩️ "${p.name}"`,'var(--text3)');
+      }
+      bar.style.width=((i+1)/total*100)+'%';
+      ptext.textContent=`${i+1} / ${total} صفوف`;
     });
-    if(bestScore>0){const sel=document.getElementById('map_'+f.key);if(sel)sel.value=bestIdx;}
-  });
-}
-
-async function autoMapWithAI(){
-  if(!apiKey){toast('أدخل مفتاح Claude API في الإعدادات أولاً','error');return;}
-  const btn=document.getElementById('autoMapBtn');btn.disabled=true;
-  showLoading('الذكاء الاصطناعي يحلل الأعمدة...','Claude AI يربط أعمدة Excel بحقول المنصة');
-  try{
-    const prompt=`لديك ملف Excel بالأعمدة التالية: ${JSON.stringify(excelHeaders)}
-
-وعينة من البيانات (صف واحد): ${JSON.stringify(excelHeaders.map((_,i)=>excelRows[0]?.[i]||''))}
-
-حقول منصة التقييم هي:
-${FIELD_DEFS.map(f=>`${f.key}: ${f.label}`).join('\n')}
-
-أعطني JSON يربط كل حقل منصة بـ index (رقم) العمود المناسب في Excel (0-based)، أو null إذا لا يوجد عمود مناسب.
-المطلوب فقط JSON بهذا الشكل:
-{"name":0,"sector":1,"desc":null,...}`;
-    const response=await callClaude(prompt);
-    const match=response.match(/\{[\s\S]*\}/);
-    if(!match) throw new Error('لم يتم الحصول على ربط صحيح');
-    const mapping=JSON.parse(match[0]);
-    FIELD_DEFS.forEach(f=>{
-      const sel=document.getElementById('map_'+f.key);
-      if(sel&&mapping[f.key]!==null&&mapping[f.key]!==undefined) sel.value=String(mapping[f.key]);
-      else if(sel&&mapping[f.key]===null) sel.value='';
-    });
-    hideLoading();btn.disabled=false;
-    toast('تم الربط الذكي بنجاح','success');
-  }catch(e){hideLoading();btn.disabled=false;toast('خطأ: '+e.message,'error');}
-}
-
-async function importProjects(){
-  // Build mapping
-  const mapping={};
-  FIELD_DEFS.forEach(f=>{
-    const sel=document.getElementById('map_'+f.key);
-    mapping[f.key]=sel&&sel.value!==''?parseInt(sel.value):null;
-  });
-  // Validate required fields
-  const missingRequired=FIELD_DEFS.filter(f=>f.required&&mapping[f.key]===null).map(f=>f.label);
-  if(missingRequired.length){toast('الحقول الإلزامية غير مربوطة: '+missingRequired.join(', '),'error');return;}
-
-  showLoading('جاري الاستيراد...','يتم تقييم المشاريع المستوردة');
-  let imported=0,skipped=0;
-  const newProjects=[];
-
-  for(const row of excelRows){
-    const get=(key)=>{const idx=mapping[key];return idx!==null?String(row[idx]||'').trim():''};
-    const name=get('name');const desc=get('desc');const sector=get('sector');const problem=get('problem');
-    if(!name||!desc||!sector){skipped++;continue;}
-    const data={
-      id:Date.now()+Math.random(),date:new Date().toLocaleDateString('ar-SA'),
-      name,sector,desc,problem:problem||desc,
-      solution:get('solution'),target:get('target'),marketSize:get('marketSize'),
-      competitors:get('competitors'),advantage:get('advantage'),tech:get('tech'),
-      usesAI:get('usesAI')||'لا',aiType:'',stage:get('stage'),teamSize:get('teamSize'),
-      teamExp:get('teamExp'),revenue:get('revenue'),customers:get('customers'),
-      prevFunding:get('prevFunding'),ask:get('ask'),goals:get('goals'),
-      addedBy:currentUser?.username||'import',importedFromExcel:true
-    };
-    const evaluation=generateLocalEvaluation(data);
-    newProjects.push({...data,evaluation});
-    imported++;
   }
+
+  addLog(`\n✅ اكتمل الاستخراج: ${extractedProjects.length} مشروع من ${total} صف`,'var(--success)');
+  btn.disabled=false;
+  setTimeout(showStep3Review, 600);
+}
+
+// Send a batch of rows to Claude, get structured project data back
+async function extractBatchWithClaude(batchData){
+  const prompt=`أنت مساعد متخصص في استخراج بيانات الشركات الناشئة.
+
+لديك البيانات التالية من ملف Excel (${batchData.length} صف):
+
+${batchData.map(b=>`=== صف ${b.index} ===\n${Object.entries(b.data).map(([k,v])=>`${k}: ${v}`).join('\n')}`).join('\n\n')}
+
+لكل صف، استخرج بيانات المشروع وحوّلها إلى JSON بهذا الشكل:
+{
+  "_index": <رقم الصف>,
+  "name": "اسم المشروع",
+  "sector": "القطاع (مثل: الصحة، التعليم، المالية، العقارات، التقنية، إلخ)",
+  "desc": "وصف مختصر للفكرة",
+  "problem": "المشكلة التي يحلها المشروع",
+  "solution": "الحل المقترح",
+  "target": "الفئة المستهدفة",
+  "marketSize": "حجم السوق إن وجد",
+  "competitors": "المنافسون",
+  "advantage": "الميزة التنافسية",
+  "tech": "التقنيات المستخدمة",
+  "usesAI": "نعم أو لا أو جزئياً",
+  "stage": "مرحلة المشروع",
+  "teamSize": "حجم الفريق",
+  "teamExp": "خبرات الفريق",
+  "revenue": "الإيرادات",
+  "customers": "العملاء الحاليون",
+  "prevFunding": "التمويل السابق",
+  "ask": "المبلغ المطلوب",
+  "goals": "الأهداف المستقبلية"
+}
+
+ملاحظات مهمة:
+- إذا كانت المعلومات غير موجودة، اترك الحقل فارغاً ""
+- استنتج القطاع والمعلومات المنطقية من السياق
+- الحقل "name" مطلوب — إذا لم يوجد اسم واضح، اخترع اسماً مناسباً من الوصف
+- أعطني مصفوفة JSON فقط بدون أي نص إضافي: [{"_index":...}, {"_index":...}]`;
+
+  const response=await callClaude(prompt);
+  const match=response.match(/\[[\s\S]*\]/);
+  if(!match) throw new Error('لم يتم الحصول على JSON صحيح');
+  return JSON.parse(match[0]);
+}
+
+// Fallback: extract without AI using header name matching
+function fallbackExtract(row, rowIndex){
+  const norm=s=>String(s||'').toLowerCase().replace(/[\s_\-\/]+/g,'');
+  const find=(...keywords)=>{
+    for(let i=0;i<excelHeaders.length;i++){
+      const h=norm(excelHeaders[i]);
+      if(keywords.some(kw=>h.includes(norm(kw)))){
+        const v=String(row[i]||'').trim();
+        if(v)return v;
+      }
+    }
+    // If no header match, try to get first non-empty value
+    return '';
+  };
+
+  // Build a flat text of the entire row for context
+  const rowText=excelHeaders.map((h,i)=>row[i]?`${h}: ${row[i]}`:'').filter(Boolean).join(' | ');
+  if(!rowText.trim())return null;
+
+  const name=find('name','اسم','project','مشروع','startup','شركة')||`مشروع ${rowIndex+1}`;
+  const sector=find('sector','قطاع','industry','مجال','field','تخصص')||'أخرى';
+  const desc=find('desc','وصف','description','idea','فكرة','about','نبذة')||rowText.substring(0,200);
+  const problem=find('problem','مشكلة','challenge','issue','pain')||desc;
+
+  return{
+    _index:rowIndex+1,name,sector,desc,problem,
+    solution:find('solution','حل','answer','how'),
+    target:find('target','مستهدف','audience','segment','فئة','customer','عميل'),
+    marketSize:find('market','سوق','size','حجم','tam','sam'),
+    competitors:find('compet','منافس','rival','alternative'),
+    advantage:find('advantage','ميزة','unique','differenti','USP','value'),
+    tech:find('tech','تقنية','technology','stack','tool','platform'),
+    usesAI:find('ai','ذكاء','artificial','machine','ml','nlp')||'لا',
+    stage:find('stage','مرحلة','phase','level','status'),
+    teamSize:find('team','فريق','member','size','عدد','staff'),
+    teamExp:find('experience','خبرة','background','qualif','founder','مؤسس'),
+    revenue:find('revenue','إيراد','income','sales','مبيعات'),
+    customers:find('customer','عميل','client','user','مستخدم'),
+    prevFunding:find('fund','تمويل','invest','capital','raise','جمع'),
+    ask:find('ask','مطلوب','need','request','amount','seeking','يطلب'),
+    goals:find('goal','هدف','vision','future','plan','خطة'),
+  };
+}
+
+function showStep3Review(){
+  document.getElementById('importStep2').style.display='none';
+  document.getElementById('importStep3').style.display='block';
+
+  const valid=extractedProjects.filter(p=>p&&p.name);
+  document.getElementById('extractSummaryAlert').innerHTML=
+    `✅ تم استخراج <strong>${valid.length}</strong> مشروع${extractedProjects.length!==valid.length?` (تم تجاهل ${extractedProjects.length-valid.length} صف غير مكتمل)`:''} — راجع البيانات أدناه ثم أكد الاستيراد.`;
+
+  document.getElementById('extractedProjectsList').innerHTML=valid.map((p,i)=>`
+    <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px;background:var(--bg3)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-weight:700;font-size:14px;flex:1">${p.name}</div>
+        <span class="decision-badge conditional">${p.sector||'—'}</span>
+        <button class="btn btn-secondary btn-sm" onclick="toggleProjectDetails('pd_${i}')">التفاصيل ▾</button>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${p.desc||'—'}</div>
+      <div id="pd_${i}" style="display:none;margin-top:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px">
+          ${[
+            ['المشكلة',p.problem],['الحل',p.solution],
+            ['الفئة المستهدفة',p.target],['حجم السوق',p.marketSize],
+            ['الميزة التنافسية',p.advantage],['التقنية',p.tech],
+            ['يستخدم AI',p.usesAI],['المرحلة',p.stage],
+            ['الفريق',p.teamSize],['خبرات الفريق',p.teamExp],
+            ['الإيرادات',p.revenue],['العملاء',p.customers],
+            ['التمويل',p.prevFunding],['المطلوب',p.ask],
+          ].filter(([,v])=>v).map(([l,v])=>`<div><span style="color:var(--text3)">${l}:</span> ${v}</div>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleProjectDetails(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+async function confirmImport(){
+  const valid=extractedProjects.filter(p=>p&&p.name);
+  if(!valid.length){toast('لا توجد مشاريع صالحة للاستيراد','error');return;}
+
+  showLoading('جاري إضافة المشاريع...','يتم حساب التقييمات');
+  const newProjects=valid.map(p=>({
+    id:Date.now()+Math.random(),
+    date:new Date().toLocaleDateString('ar-SA'),
+    name:p.name, sector:p.sector||'أخرى',
+    desc:p.desc||'', problem:p.problem||p.desc||'',
+    solution:p.solution||'', target:p.target||'',
+    marketSize:p.marketSize||'', competitors:p.competitors||'',
+    advantage:p.advantage||'', tech:p.tech||'',
+    usesAI:p.usesAI||'لا', aiType:'',
+    stage:p.stage||'', teamSize:p.teamSize||'',
+    teamExp:p.teamExp||'', revenue:p.revenue||'',
+    customers:p.customers||'', prevFunding:p.prevFunding||'',
+    ask:p.ask||'', goals:p.goals||'',
+    addedBy:currentUser?.username||'import',
+    importedFromExcel:true,
+    evaluation:generateLocalEvaluation({
+      name:p.name,sector:p.sector||'أخرى',
+      desc:p.desc||'',problem:p.problem||p.desc||'',
+      solution:p.solution||'',target:p.target||'',
+      marketSize:p.marketSize||'',competitors:p.competitors||'',
+      advantage:p.advantage||'',tech:p.tech||'',
+      usesAI:p.usesAI||'لا',stage:p.stage||'',
+      teamSize:p.teamSize||'',teamExp:p.teamExp||'',
+      revenue:p.revenue||'',customers:p.customers||'',
+      prevFunding:p.prevFunding||'',ask:p.ask||'',goals:p.goals||''
+    })
+  }));
 
   projects.push(...newProjects);save();updateBadge();
   hideLoading();
 
-  document.getElementById('importStepMapping').style.display='none';
+  document.getElementById('importStep3').style.display='none';
   document.getElementById('importResult').style.display='block';
   document.getElementById('importResultContent').innerHTML=`
-    <div class="alert alert-success" style="margin-bottom:12px">✅ تم استيراد <strong>${imported}</strong> مشروع بنجاح.</div>
-    ${skipped>0?`<div class="alert alert-warning">⚠️ تم تجاهل <strong>${skipped}</strong> صف بسبب بيانات ناقصة (الاسم، الوصف، أو القطاع).</div>`:''}
-    <div class="alert alert-info">ℹ️ التقييمات تمت محلياً. لتحليل أعمق بـ Claude AI، افتح كل مشروع من صفحة التقارير.</div>
-    <div style="margin-top:12px">
-      ${newProjects.slice(0,5).map(p=>`<div class="rank-card"><div class="rank-info"><strong>${p.name}</strong><span>${p.sector}</span></div><div class="score-badge ${scoreClass(p.evaluation?.totalScore||0)}" style="width:36px;height:36px;font-size:12px">${p.evaluation?.totalScore||0}</div></div>`).join('')}
-      ${newProjects.length>5?`<div style="font-size:12px;color:var(--text3);text-align:center;margin-top:8px">و ${newProjects.length-5} مشاريع أخرى...</div>`:''}
+    <div class="alert alert-success" style="margin-bottom:12px">✅ تم استيراد <strong>${newProjects.length}</strong> مشروع بنجاح!</div>
+    <div class="alert alert-info">ℹ️ التقييمات الأولية تمت محلياً. لتحليل Claude AI التفصيلي، افتح كل مشروع من صفحة التقارير.</div>
+    <div style="margin-top:14px">
+      ${newProjects.slice(0,6).map(p=>`<div class="rank-card">
+        <div class="rank-info"><strong>${p.name}</strong><span>${p.sector}</span></div>
+        <div class="score-badge ${scoreClass(p.evaluation?.totalScore||0)}" style="width:38px;height:38px;font-size:12px">${p.evaluation?.totalScore||0}</div>
+      </div>`).join('')}
+      ${newProjects.length>6?`<div style="font-size:12px;color:var(--text3);text-align:center;padding:8px">+ ${newProjects.length-6} مشاريع أخرى</div>`:''}
     </div>`;
-  toast(`تم استيراد ${imported} مشروع!`,'success');
+  toast(`تم استيراد ${newProjects.length} مشروع!`,'success');
 }
 
 function resetImport(){
-  excelRows=[];excelHeaders=[];
-  document.getElementById('importStepMapping').style.display='none';
+  excelRows=[];excelHeaders=[];extractedProjects=[];
+  document.getElementById('importStep1').style.display='block';
+  document.getElementById('importStep2').style.display='none';
+  document.getElementById('importStep3').style.display='none';
   document.getElementById('importResult').style.display='none';
+  document.getElementById('importProgress').style.display='none';
   document.getElementById('dropFileInput').value='';
+  if(document.getElementById('progressLog')) document.getElementById('progressLog').innerHTML='';
+  if(document.getElementById('progressBar')) document.getElementById('progressBar').style.width='0%';
+  const btn=document.getElementById('aiExtractBtn');if(btn)btn.disabled=false;
 }
 
 // ════════════════════════════════════════════
