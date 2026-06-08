@@ -259,7 +259,83 @@ tbody td strong{color:var(--text)}
 .mapping-arrow { color:var(--text3);font-size:14px; }
 .mapping-sel { flex:1; }
 
-/* PRINT */
+/* LANDING PAGE */
+#landingScreen {
+  position:fixed;inset:0;background:var(--bg);z-index:9998;
+  overflow-y:auto;display:none;
+}
+.landing-hero {
+  background:linear-gradient(135deg,#0F1117 0%,#161B27 50%,#0F1117 100%);
+  padding:0;position:relative;overflow:hidden;
+}
+.landing-hero::before {
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(79,70,229,0.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.landing-nav {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 48px;border-bottom:1px solid rgba(255,255,255,0.06);
+  position:sticky;top:0;background:rgba(15,17,23,0.85);backdrop-filter:blur(12px);z-index:10;
+}
+.landing-nav .brand { display:flex;align-items:center;gap:12px; }
+.landing-nav .brand-icon { width:40px;height:40px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.landing-nav .brand-name { font-size:16px;font-weight:700; }
+.landing-nav .brand-sub { font-size:11px;color:var(--text3);margin-top:1px; }
+.landing-nav-btns { display:flex;gap:10px; }
+.landing-hero-inner { padding:80px 48px 64px;max-width:1100px;margin:0 auto;text-align:center; }
+.landing-badge { display:inline-flex;align-items:center;gap:8px;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);color:var(--primary-light);border-radius:20px;padding:6px 16px;font-size:12px;font-weight:600;margin-bottom:24px; }
+.landing-title { font-size:48px;font-weight:800;line-height:1.2;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,var(--primary-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.landing-sub { font-size:17px;color:var(--text2);max-width:600px;margin:0 auto 36px;line-height:1.7; }
+.landing-cta-row { display:flex;gap:14px;justify-content:center;flex-wrap:wrap; }
+.landing-cta-primary { padding:14px 32px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px; }
+.landing-cta-primary:hover { background:var(--primary-dark);transform:translateY(-1px); }
+.landing-cta-secondary { padding:14px 32px;background:transparent;color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.2s; }
+.landing-cta-secondary:hover { background:var(--bg3);border-color:var(--primary-light); }
+.landing-stats-bar { display:flex;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg2); }
+.landing-stat { flex:1;padding:24px;text-align:center;border-left:1px solid var(--border); }
+.landing-stat:last-child { border-left:none; }
+.landing-stat-val { font-size:28px;font-weight:800;color:var(--primary-light); }
+.landing-stat-label { font-size:12px;color:var(--text3);margin-top:4px; }
+.landing-section { padding:64px 48px;max-width:1100px;margin:0 auto; }
+.landing-section-title { font-size:28px;font-weight:700;text-align:center;margin-bottom:8px; }
+.landing-section-sub { font-size:14px;color:var(--text3);text-align:center;margin-bottom:40px; }
+.services-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px; }
+.service-card { background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:all 0.2s; }
+.service-card:hover { border-color:var(--primary);transform:translateY(-2px); }
+.service-icon { font-size:28px;margin-bottom:14px; }
+.service-title { font-size:15px;font-weight:700;margin-bottom:8px; }
+.service-desc { font-size:13px;color:var(--text2);line-height:1.6; }
+.steps-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px; }
+.step-card { text-align:center;padding:28px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius); }
+.step-num { width:44px;height:44px;border-radius:50%;background:rgba(79,70,229,0.15);border:2px solid var(--primary);color:var(--primary-light);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px; }
+.step-title { font-size:14px;font-weight:700;margin-bottom:6px; }
+.step-desc { font-size:12px;color:var(--text3); }
+.landing-footer { background:var(--bg2);border-top:1px solid var(--border);padding:32px 48px;text-align:center; }
+.landing-footer-logo { font-size:20px;font-weight:700;margin-bottom:8px; }
+.landing-footer-sub { font-size:12px;color:var(--text3); }
+@media(max-width:768px){
+  .landing-nav { padding:14px 20px; }
+  .landing-hero-inner { padding:48px 20px 40px; }
+  .landing-title { font-size:30px; }
+  .landing-section { padding:40px 20px; }
+  .landing-stats-bar { flex-wrap:wrap; }
+  .landing-stat { min-width:50%; }
+  .landing-footer { padding:24px 20px; }
+}
+
+/* STUDENT ROLE */
+.role-badge.student { background:rgba(251,191,36,0.15);color:#FBBF24; }
+
+/* EDIT MODAL */
+#editModal { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;overflow-y:auto;backdrop-filter:blur(3px); }
+#editModalInner { max-width:860px;margin:24px auto;padding:16px; }
+
+/* EMAIL MODAL */
+#emailModal { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;overflow-y:auto;backdrop-filter:blur(3px); }
+#emailModalInner { max-width:480px;margin:80px auto;padding:16px; }
+
+/* PRINT - improved */
 @media print {
   .sidebar,.hamburger,.sidebar-overlay,.toast-container,.loading-overlay,.btn-actions,.tabs,.no-print,#loginScreen,.user-bar{display:none!important}
   .main{margin-right:0!important;padding:0!important}
@@ -296,6 +372,144 @@ tbody td strong{color:var(--text)}
 </head>
 <body>
 
+<!-- ════════════ LANDING PAGE ════════════ -->
+<div id="landingScreen">
+
+  <!-- NAV -->
+  <nav class="landing-nav">
+    <div class="brand">
+      <div class="brand-icon">🚀</div>
+      <div>
+        <div class="brand-name">حاضنة أعمال الذكاء الاصطناعي</div>
+        <div class="brand-sub">كلية الحاسبات وتقنية المعلومات</div>
+      </div>
+    </div>
+    <div class="landing-nav-btns">
+      <button class="landing-cta-secondary" style="padding:9px 20px;font-size:13px" onclick="showLoginFromLanding()">🔐 دخول المشرفين</button>
+      <button class="landing-cta-primary" style="padding:9px 20px;font-size:13px" onclick="showStudentSubmit()">📝 تقديم مشروع</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="landing-hero">
+    <div class="landing-hero-inner">
+      <div class="landing-badge">🏆 حاضنة متخصصة في الذكاء الاصطناعي — رؤية 2030</div>
+      <h1 class="landing-title">احتضن فكرتك وحوّلها<br>إلى شركة ذكاء اصطناعي ناجحة</h1>
+      <p class="landing-sub">بيئة احتضان متكاملة داخل كلية الحاسبات وتقنية المعلومات — تدعم الشركات الناشئة والمبتكرين في مجالات الذكاء الاصطناعي وتقنياته التطبيقية</p>
+      <div class="landing-cta-row">
+        <button class="landing-cta-primary" onclick="showStudentSubmit()">🚀 قدّم مشروعك الآن</button>
+        <button class="landing-cta-secondary" onclick="document.getElementById('landingServices').scrollIntoView({behavior:'smooth'})">اعرف المزيد ↓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="landing-stats-bar">
+    <div class="landing-stat"><div class="landing-stat-val">20+</div><div class="landing-stat-label">مرشداً ومستشاراً متخصصاً</div></div>
+    <div class="landing-stat"><div class="landing-stat-val">3</div><div class="landing-stat-label">مراحل احتضان وتسريع</div></div>
+    <div class="landing-stat"><div class="landing-stat-val">Seed</div><div class="landing-stat-label">تمويل أولي للمشاريع</div></div>
+    <div class="landing-stat"><div class="landing-stat-val">2030</div><div class="landing-stat-label">توافق مع رؤية المملكة</div></div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="landing-section" id="landingServices">
+    <div class="landing-section-title">ما الذي تقدمه الحاضنة؟</div>
+    <div class="landing-section-sub">منظومة متكاملة من البرامج التدريبية والبنية التحتية والشراكات الاستراتيجية</div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🎓</div>
+        <div class="service-title">برامج تدريبية متخصصة في AI</div>
+        <div class="service-desc">تصميم وتنفيذ برامج تدريبية في الذكاء الاصطناعي — من الأساسيات إلى التطبيقات المتقدمة ونماذج الأعمال — بمنهج موزع على مراحل واضحة</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">👨‍💼</div>
+        <div class="service-title">مرشدون وخبراء متخصصون</div>
+        <div class="service-desc">استقطاب مرشدين (Mentors) من مجالات الذكاء الاصطناعي وريادة الأعمال من القطاعين الأكاديمي والصناعي، يقدمون جلسات إرشاد فردية وجماعية منتظمة</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">☁️</div>
+        <div class="service-title">دعم تقني وسحابي متكامل</div>
+        <div class="service-desc">توفير دعم تقني يشمل البنية التحتية والأدوات والمنصات السحابية (AWS / Azure / GCP) مع اعتمادات مخصصة للشركات المحتضنة وبيئات تطوير جاهزة</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💰</div>
+        <div class="service-title">دعم مالي أولي (Seed Funding)</div>
+        <div class="service-desc">توفير دعم مالي أولي للمشاريع المحتضنة من خلال صندوق خاص أو شراكات مع صناديق الاستثمار الجريئة والجهات الداعمة</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🤝</div>
+        <div class="service-title">شراكات صناعية وتقنية</div>
+        <div class="service-desc">بناء شراكات استراتيجية مع جهات صناعية وتقنية محلية ودولية لدعم المحتضنين بالتدريب والتوظيف وفرص السوق والتمويل</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">⚖️</div>
+        <div class="service-title">دعم قانوني واستشاري</div>
+        <div class="service-desc">تقديم دعم قانوني واستشاري متكامل يشمل حماية الملكية الفكرية وتسجيل البراءات وتأسيس الشركات وصياغة العقود</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🖥️</div>
+        <div class="service-title">مساحات عمل وتجهيزات متطورة</div>
+        <div class="service-desc">توفير مساحات عمل مجهزة ومرنة تلائم طبيعة مشاريع الذكاء الاصطناعي مع إتاحة أدوات التطوير والنمذجة والاختبار وسيرفرات GPU متخصصة</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🏁</div>
+        <div class="service-title">هاكاثونات وفعاليات ابتكارية</div>
+        <div class="service-desc">تنظيم هاكاثونات وفعاليات ابتكارية مرتبطة بالذكاء الاصطناعي بشكل دوري، لاستقطاب المواهب وتوليد الأفكار وتعزيز ثقافة الابتكار</div>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🔗</div>
+        <div class="service-title">ربط بمبادرات رؤية 2030</div>
+        <div class="service-desc">الربط مع مبادرات الجامعة والجهات الخارجية ذات الصلة (SDAIA، وزارة الاتصالات، Monsha'at، Vision 2030) لضمان التوافق الاستراتيجي والاستفادة من الدعم المتاح</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="landing-section">
+      <div class="landing-section-title">كيف تنضم للحاضنة؟</div>
+      <div class="landing-section-sub">أربع خطوات واضحة من الفكرة إلى الاحتضان</div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-title">تقديم الفكرة</div>
+          <div class="step-desc">أدخل بيانات مشروعك عبر نموذج التقديم الذكي — مجاني وسريع</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-title">التقييم الذكي</div>
+          <div class="step-desc">يحلل نظام الذكاء الاصطناعي مشروعك ويُصدر تقريراً شاملاً فورياً</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-title">المراجعة والقبول</div>
+          <div class="step-desc">يراجع فريق الحاضنة التقرير ويتواصل مع المشاريع المقبولة خلال أسبوعين</div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-title">الاحتضان والتسريع</div>
+          <div class="step-desc">انطلق مع برنامج الاحتضان: تدريب، إرشاد، تمويل، وشراكات استراتيجية</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA SECTION -->
+  <div class="landing-section" style="text-align:center;padding-bottom:80px">
+    <div class="landing-section-title">مستعد لتحويل فكرتك إلى واقع؟</div>
+    <div class="landing-section-sub" style="margin-bottom:32px">قدّم مشروعك الآن وستحصل على تقييم ذكي شامل فوري</div>
+    <div class="landing-cta-row">
+      <button class="landing-cta-primary" onclick="showStudentSubmit()">🚀 ابدأ التقديم مجاناً</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="landing-footer">
+    <div class="landing-footer-logo">🚀 حاضنة أعمال الذكاء الاصطناعي</div>
+    <div class="landing-footer-sub">كلية الحاسبات وتقنية المعلومات — جميع الحقوق محفوظة</div>
+  </div>
+</div>
+
 <!-- ════════════ LOGIN SCREEN ════════════ -->
 <div id="loginScreen">
   <div class="login-box">
@@ -318,6 +532,59 @@ tbody td strong{color:var(--text)}
       <span class="role-hint">admin / admin123</span>
       <span class="role-hint">evaluator / eval456</span>
       <span class="role-hint">investor / inv789</span>
+      <span class="role-hint" style="color:#FBBF24;border-color:rgba(251,191,36,0.3)">student / student123</span>
+    </div>
+    <div style="margin-top:16px;text-align:center;border-top:1px solid var(--border);padding-top:14px">
+      <button style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit" onclick="goToLanding()">← العودة للصفحة الرئيسية</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ EDIT PROJECT MODAL ════════════ -->
+<div id="editModal">
+  <div id="editModalInner">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 style="font-size:16px;font-weight:700">✏️ تعديل بيانات المشروع</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeEditModal()">✕ إغلاق</button>
+      </div>
+      <div id="editFormContent"></div>
+      <div class="btn-actions">
+        <button class="btn btn-secondary" onclick="closeEditModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveProjectEdit()">💾 حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ EMAIL REPORT MODAL ════════════ -->
+<div id="emailModal">
+  <div id="emailModalInner">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 style="font-size:16px;font-weight:700">📧 إرسال التقرير بالبريد</h3>
+        <button class="btn btn-secondary btn-sm" onclick="closeEmailModal()">✕</button>
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">البريد الإلكتروني للمستلم</label>
+        <input type="email" id="emailTo" class="form-input" placeholder="student@example.com" dir="ltr">
+      </div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">الموضوع</label>
+        <input type="text" id="emailSubject" class="form-input" value="تقرير تقييم مشروعك — حاضنة الذكاء الاصطناعي">
+      </div>
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">ملاحظات إضافية (اختياري)</label>
+        <textarea id="emailNote" class="form-textarea" rows="3" placeholder="أضف أي ملاحظات للمستلم..."></textarea>
+      </div>
+      <div class="alert alert-info" style="font-size:12px;margin-bottom:14px">
+        💡 سيتم إرسال رابط التقرير الكامل عبر EmailJS. تأكد من إعداد مفتاح EmailJS في الإعدادات.
+      </div>
+      <div id="emailSendStatus"></div>
+      <div class="btn-actions" style="margin-top:0;padding-top:14px">
+        <button class="btn btn-secondary" onclick="closeEmailModal()">إلغاء</button>
+        <button class="btn btn-primary" id="emailSendBtn" onclick="sendReportEmail()">📤 إرسال</button>
+      </div>
     </div>
   </div>
 </div>
@@ -373,6 +640,7 @@ tbody td strong{color:var(--text)}
     <div class="nav-section">
       <div class="nav-section-label">النظام</div>
       <div class="nav-item" id="nav-settings" onclick="showPage('settings')"><span class="ni">⚙️</span> الإعدادات</div>
+      <div class="nav-item" onclick="goToLanding()"><span class="ni">🏠</span> الصفحة الرئيسية</div>
     </div>
   </nav>
   <div class="sidebar-footer">
@@ -388,6 +656,33 @@ tbody td strong{color:var(--text)}
 </aside>
 
 <main class="main" id="mainApp" style="display:none">
+
+  <!-- STUDENT VIEW -->
+  <div id="page-student" class="page" style="max-width:900px;margin:0 auto;padding:20px 20px 60px">
+    <!-- Step: add project -->
+    <div id="studentStep1">
+      <div style="text-align:center;padding:32px 0 24px">
+        <div style="font-size:40px;margin-bottom:12px">🚀</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:8px">أهلاً بك في حاضنة الذكاء الاصطناعي</h2>
+        <p style="color:var(--text3);font-size:14px">أدخل بيانات مشروعك وسيقوم الذكاء الاصطناعي بتقييمه فورياً وتقديم تقرير مفصل</p>
+      </div>
+      <div id="studentFormWrap"></div>
+    </div>
+    <!-- Step: report result -->
+    <div id="studentStep2" style="display:none">
+      <div style="text-align:center;padding:24px 0 16px">
+        <div style="font-size:40px;margin-bottom:10px">📋</div>
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">تقرير تقييم مشروعك</h2>
+        <p style="color:var(--text3);font-size:13px">تقييم ذكي شامل بناءً على بيانات مشروعك</p>
+      </div>
+      <div class="no-print" style="display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn btn-secondary btn-sm" style="color:#10b981;border-color:rgba(16,185,129,0.4)" onclick="openEmailModalForStudent()">📧 إرسال بالبريد</button>
+        <button class="btn btn-secondary btn-sm" onclick="studentStartOver()">🔄 تقييم مشروع آخر</button>
+      </div>
+      <div id="studentReportArea"></div>
+    </div>
+  </div>
 
   <!-- DASHBOARD -->
   <div id="page-dashboard" class="page active">
@@ -670,6 +965,18 @@ tbody td strong{color:var(--text)}
         </div>
       </div>
     </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-title">📧 إعداد EmailJS (إرسال التقارير)</div>
+      <div class="alert alert-info" style="margin-bottom:14px">ℹ️ سجّل مجاناً على <strong>emailjs.com</strong> واحصل على المفاتيح لتفعيل إرسال التقارير بالبريد. بدون إعداد يُفتح تطبيق البريد تلقائياً.</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Public Key</label><input type="password" class="form-input" id="settingsEmailjsKey" placeholder="user_xxxxxxxxxx"></div>
+        <div class="form-group"><label class="form-label">Service ID</label><input class="form-input" id="settingsEmailjsService" placeholder="service_xxxxxxx"></div>
+        <div class="form-group"><label class="form-label">Template ID</label><input class="form-input" id="settingsEmailjsTemplate" placeholder="template_xxxxxxx"></div>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn btn-primary btn-sm" onclick="saveEmailjsSettings()">💾 حفظ إعدادات EmailJS</button>
+      </div>
+    </div>
     <div class="card" style="margin-top:16px" id="usersCard">
       <div class="card-title">👥 إدارة المستخدمين</div>
       <div id="usersTable"></div>
@@ -729,6 +1036,7 @@ async function doLogin() {
     'admin':    { plainCheck: 'admin123',    role:'admin',     nameAr:'المشرف العام' },
     'evaluator':{ plainCheck: 'eval456',     role:'evaluator', nameAr:'المقيّم' },
     'investor': { plainCheck: 'inv789',      role:'investor',  nameAr:'المستثمر' },
+    'student':  { plainCheck: 'student123',  role:'student',   nameAr:'طالب' },
   };
 
   const found = credMap[username];
@@ -753,13 +1061,29 @@ function onLoginSuccess() {
   document.getElementById('userAvatar').textContent = currentUser.username[0].toUpperCase();
   document.getElementById('userNameDisplay').textContent = currentUser.nameAr;
   const rb = document.getElementById('roleBadge');
-  rb.textContent = { admin:'مشرف', evaluator:'مقيّم', investor:'مستثمر' }[currentUser.role];
+  rb.textContent = { admin:'مشرف', evaluator:'مقيّم', investor:'مستثمر', student:'طالب' }[currentUser.role]||currentUser.role;
   rb.className = 'role-badge ' + currentUser.role;
 
   // Role-based nav visibility
   const isAdmin    = currentUser.role === 'admin';
-  const isEval     = currentUser.role === 'evaluator';
   const isInvestor = currentUser.role === 'investor';
+  const isStudent  = currentUser.role === 'student';
+
+  // Student: only sees add page and their own report
+  if (isStudent) {
+    document.getElementById('sidebar').style.display = 'none';
+    document.getElementById('hamburgerBtn').style.display = 'none';
+    document.getElementById('mainApp').style.marginRight = '0';
+    document.getElementById('mainApp').style.padding = '54px 0 0';
+    showStudentView();
+    renderDashboard(); updateApiStatus(); updateBadge();
+    return;
+  }
+
+  document.getElementById('sidebar').style.display = 'flex';
+  document.getElementById('hamburgerBtn').style.display = 'flex';
+  document.getElementById('mainApp').style.marginRight = '';
+  document.getElementById('mainApp').style.padding = '';
 
   // Investor: read-only (no add, no import, no settings)
   document.getElementById('nav-add').style.display    = isInvestor ? 'none' : 'flex';
@@ -804,8 +1128,25 @@ let apiKey   = localStorage.getItem('ai_incubator_key') || '';
 let model    = localStorage.getItem('ai_incubator_model') || 'claude-sonnet-4-6';
 let autosaveTimer = null;
 
+// Unified settings object (referenced by new features)
+const settings = {
+  get apiKey() { return localStorage.getItem('ai_incubator_key') || ''; },
+  get model()  { return localStorage.getItem('ai_incubator_model') || 'claude-sonnet-4-6'; },
+  get emailjsKey()      { return localStorage.getItem('ai_emailjs_key') || ''; },
+  get emailjsService()  { return localStorage.getItem('ai_emailjs_service') || ''; },
+  get emailjsTemplate() { return localStorage.getItem('ai_emailjs_template') || ''; },
+};
+
 document.getElementById('settingsApiKey').value = apiKey;
 document.getElementById('settingsModel').value  = model;
+document.getElementById('settingsEmailjsKey').value      = localStorage.getItem('ai_emailjs_key') || '';
+document.getElementById('settingsEmailjsService').value   = localStorage.getItem('ai_emailjs_service') || '';
+document.getElementById('settingsEmailjsTemplate').value  = localStorage.getItem('ai_emailjs_template') || '';
+
+// Show landing page on first visit (no session)
+if (!sessionStorage.getItem('ai_incubator_user')) {
+  document.getElementById('landingScreen').style.display = 'block';
+}
 
 // ════════════════════════════════════════════
 //  NAVIGATION
@@ -820,10 +1161,15 @@ function toggleSidebar() {
 function showPage(id) {
   // Role guard
   if (currentUser) {
-    const blocked = { investor:['add','import','settings'], evaluator:[] };
+    const blocked = {
+      investor:['add','import','settings'],
+      evaluator:[],
+      student:['dashboard','projects','rankings','compare','reports','import','settings','users']
+    };
     if ((blocked[currentUser.role]||[]).includes(id)) {
       toast('ليس لديك صلاحية الوصول لهذه الصفحة','error'); return;
     }
+    if (currentUser.role === 'student') { showStudentView(); return; }
   }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -884,6 +1230,28 @@ function clearApiKey() {
   apiKey='';localStorage.removeItem('ai_incubator_key');
   document.getElementById('settingsApiKey').value='';
   updateApiStatus(); toast('تم حذف المفتاح','info');
+}
+
+function saveEmailjsSettings() {
+  const key = document.getElementById('settingsEmailjsKey').value.trim();
+  const service = document.getElementById('settingsEmailjsService').value.trim();
+  const template = document.getElementById('settingsEmailjsTemplate').value.trim();
+  localStorage.setItem('ai_emailjs_key', key);
+  localStorage.setItem('ai_emailjs_service', service);
+  localStorage.setItem('ai_emailjs_template', template);
+  toast('تم حفظ إعدادات EmailJS', 'success');
+}
+
+// Load EmailJS SDK on demand
+function loadEmailJS() {
+  if (window.emailjs) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+    s.onload = () => { emailjs.init(settings.emailjsKey); resolve(); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
 }
 
 async function testApi() {
@@ -1309,6 +1677,7 @@ function renderProjectsTable(){
       <td><span class="decision-badge ${decisionClass(ev.decision)}">${ev.decision||'—'}</span></td>
       <td style="display:flex;gap:4px;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="quickReport(${p.id})">📋</button>
+        ${canEdit?`<button class="btn btn-secondary btn-sm" style="color:var(--warning);border-color:rgba(245,158,11,0.4)" onclick="openEditModal(${p.id})">✏️</button>`:''}
         ${canEdit?`<button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">🗑️</button>`:''}
       </td>
     </tr>`;}).join('')}</tbody>
@@ -1374,6 +1743,8 @@ function showFullReport(id){
       <span class="decision-badge ${decisionClass(ev.decision)}" style="font-size:13px;padding:6px 16px">${ev.decision||'—'}</span>
       <div class="no-print" style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn btn-secondary btn-sm" style="color:#10b981;border-color:rgba(16,185,129,0.4)" onclick="openEmailModal(${p.id})">📧 إرسال بالبريد</button>
+        ${canEdit?`<button class="btn btn-secondary btn-sm" style="color:var(--warning);border-color:rgba(245,158,11,0.4)" onclick="openEditModal(${p.id})">✏️ تعديل</button>`:''}
         ${canEdit?`<button class="btn btn-danger btn-sm" onclick="deleteProject(${p.id})">🗑️ حذف</button>`:''}
       </div>
     </div>
@@ -1484,6 +1855,374 @@ async function regenerateActionPlan(id) {
   } catch(e) {
     toast('خطأ في التوليد: '+e.message,'error');
     btn.disabled=false; btn.textContent='✨ تحديث بالذكاء الاصطناعي';
+  }
+}
+
+// ════════════════════════════════════════════
+//  LANDING PAGE NAVIGATION
+// ════════════════════════════════════════════
+function goToLanding() {
+  document.getElementById('landingScreen').style.display = 'block';
+  document.getElementById('loginScreen').style.display = 'none';
+  if (currentUser) doLogout();
+}
+
+function showLoginFromLanding() {
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function showStudentSubmit() {
+  // Pre-fill student credentials and show login
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginUser').value = 'student';
+  document.getElementById('loginPass').value = 'student123';
+  // Auto-login as student
+  doLogin();
+}
+
+// ════════════════════════════════════════════
+//  STUDENT VIEW
+// ════════════════════════════════════════════
+let studentProjectId = null;
+
+function showStudentView() {
+  // Hide all normal pages, show student page
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-student').classList.add('active');
+  // Build the add form inside student view if not already built
+  if (!document.getElementById('studentFormWrap').hasChildNodes()) {
+    buildStudentForm();
+  }
+  document.getElementById('studentStep1').style.display = 'block';
+  document.getElementById('studentStep2').style.display = 'none';
+}
+
+function buildStudentForm() {
+  // Clone the add-project form fields into student view
+  const wrap = document.getElementById('studentFormWrap');
+  wrap.innerHTML = `
+    <div class="card">
+      <div class="autosave-bar"><div class="autosave-dot" id="sAutosaveDot"></div><span id="sAutosaveText">لم يتم الحفظ بعد</span></div>
+      ${buildProjectFormHTML('s_')}
+      <div class="btn-actions">
+        <button class="btn btn-primary" id="studentSubmitBtn" onclick="submitStudentProject()">
+          <span>🤖</span> تقييم مشروعي بالذكاء الاصطناعي
+        </button>
+      </div>
+    </div>`;
+}
+
+function buildProjectFormHTML(prefix) {
+  return `
+  <div class="form-section">
+    <div class="form-section-title">🏢 معلومات المشروع الأساسية</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">اسم المشروع <span class="req">*</span></label><input class="form-input" id="${prefix}name" placeholder="اسم مشروعك"></div>
+      <div class="form-group"><label class="form-label">القطاع</label>
+        <select class="form-select" id="${prefix}sector">
+          <option>تقنية المعلومات</option><option>الصحة والرعاية الصحية</option><option>التعليم والتدريب</option>
+          <option>المالية والتقنية المالية</option><option>التجارة الإلكترونية</option><option>الزراعة والغذاء</option>
+          <option>الطاقة والاستدامة</option><option>النقل واللوجستيات</option><option>الترفيه والإعلام</option><option>أخرى</option>
+        </select></div>
+      <div class="form-group full"><label class="form-label">وصف مختصر للمشروع <span class="req">*</span></label><textarea class="form-textarea" id="${prefix}desc" rows="3" placeholder="اشرح فكرتك باختصار..."></textarea></div>
+      <div class="form-group full"><label class="form-label">المشكلة التي يحلها المشروع</label><textarea class="form-textarea" id="${prefix}problem" rows="2" placeholder="ما المشكلة التي تحلها؟"></textarea></div>
+      <div class="form-group full"><label class="form-label">الحل المقترح</label><textarea class="form-textarea" id="${prefix}solution" rows="2" placeholder="كيف يحل مشروعك هذه المشكلة؟"></textarea></div>
+    </div>
+  </div>
+  <div class="form-section">
+    <div class="form-section-title">⚙️ التقنية والفريق</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">مرحلة المشروع</label>
+        <select class="form-select" id="${prefix}stage">
+          <option>فكرة / Idea</option><option>نموذج أولي / Prototype</option><option>منتج MVP</option>
+          <option>إيرادات مبكرة</option><option>مرحلة النمو</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">حجم الفريق</label>
+        <select class="form-select" id="${prefix}teamSize">
+          <option>مؤسس واحد</option><option>2-3 أشخاص</option><option>4-6 أشخاص</option><option>7+ أشخاص</option>
+        </select></div>
+      <div class="form-group full"><label class="form-label">خبرة الفريق</label><textarea class="form-textarea" id="${prefix}teamExp" rows="2" placeholder="صف خبرة الفريق المؤسس..."></textarea></div>
+      <div class="form-group full"><label class="form-label">التقنيات المستخدمة</label><input class="form-input" id="${prefix}tech" placeholder="Python, TensorFlow, React..."></div>
+      <div class="form-group"><label class="form-label">هل يستخدم الذكاء الاصطناعي؟</label>
+        <select class="form-select" id="${prefix}usesAI"><option>نعم</option><option>جزئياً</option><option>لا</option></select></div>
+      <div class="form-group"><label class="form-label">الميزة التنافسية</label><input class="form-input" id="${prefix}advantage" placeholder="ما الذي يميزك عن المنافسين؟"></div>
+    </div>
+  </div>
+  <div class="form-section">
+    <div class="form-section-title">💰 السوق والتمويل</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">العملاء الحاليون</label><input class="form-input" id="${prefix}customers" placeholder="عدد العملاء أو 'لا يوجد بعد'"></div>
+      <div class="form-group"><label class="form-label">الإيرادات الشهرية</label><input class="form-input" id="${prefix}revenue" placeholder="مثال: 0 أو 5000 ريال"></div>
+      <div class="form-group"><label class="form-label">التمويل السابق</label><input class="form-input" id="${prefix}prevFunding" placeholder="لا يوجد / بوتسترابينغ / ..."></div>
+      <div class="form-group"><label class="form-label">المبلغ المطلوب</label><input class="form-input" id="${prefix}ask" placeholder="مثال: 500,000 ريال"></div>
+      <div class="form-group full"><label class="form-label">الأهداف المستقبلية</label><textarea class="form-textarea" id="${prefix}goals" rows="2" placeholder="ما هي أهدافك خلال 12-24 شهراً؟"></textarea></div>
+    </div>
+  </div>`;
+}
+
+async function submitStudentProject() {
+  const btn = document.getElementById('studentSubmitBtn');
+  const name = document.getElementById('s_name').value.trim();
+  const desc = document.getElementById('s_desc').value.trim();
+  if (!name || !desc) { toast('يرجى إدخال اسم المشروع والوصف على الأقل', 'error'); return; }
+
+  btn.disabled = true; btn.textContent = '⏳ جارٍ التقييم...';
+  showLoading('جارٍ تقييم مشروعك...', 'يعمل الذكاء الاصطناعي على تحليل مشروعك');
+
+  const data = {
+    name, desc,
+    sector:    document.getElementById('s_sector').value,
+    problem:   document.getElementById('s_problem').value,
+    solution:  document.getElementById('s_solution').value,
+    stage:     document.getElementById('s_stage').value,
+    teamSize:  document.getElementById('s_teamSize').value,
+    teamExp:   document.getElementById('s_teamExp').value,
+    tech:      document.getElementById('s_tech').value,
+    usesAI:    document.getElementById('s_usesAI').value,
+    advantage: document.getElementById('s_advantage').value,
+    customers: document.getElementById('s_customers').value,
+    revenue:   document.getElementById('s_revenue').value,
+    prevFunding: document.getElementById('s_prevFunding').value,
+    ask:       document.getElementById('s_ask').value,
+    goals:     document.getElementById('s_goals').value,
+  };
+
+  try {
+    let evaluation;
+    if (settings.apiKey) {
+      evaluation = await analyzeWithClaude(data);
+    } else {
+      evaluation = generateLocalEvaluation(data);
+    }
+
+    const project = {
+      id: Date.now(),
+      ...data,
+      evaluation,
+      createdAt: new Date().toISOString(),
+      source: 'student',
+      ownerRole: 'student',
+    };
+
+    studentProjectId = project.id;
+    projects.push(project);
+    save(); updateBadge();
+
+    hideLoading();
+    btn.disabled = false; btn.innerHTML = '<span>🤖</span> تقييم مشروعي بالذكاء الاصطناعي';
+
+    // Show report
+    document.getElementById('studentStep1').style.display = 'none';
+    document.getElementById('studentStep2').style.display = 'block';
+    renderStudentReport(project);
+    toast('تم تقييم مشروعك بنجاح!', 'success');
+  } catch(e) {
+    hideLoading();
+    btn.disabled = false; btn.innerHTML = '<span>🤖</span> تقييم مشروعي بالذكاء الاصطناعي';
+    toast('خطأ في التقييم: ' + e.message, 'error');
+  }
+}
+
+function renderStudentReport(p) {
+  const area = document.getElementById('studentReportArea');
+  if (!area) return;
+  // Temporarily add to projects so showFullReport can find it
+  const dummy = document.getElementById('fullReportArea') || document.createElement('div');
+  // Build report inline
+  const ev = p.evaluation || {};
+  const sc = ev.scores || {};
+  const scoreClass = ev.totalScore >= 75 ? 'excellent' : ev.totalScore >= 55 ? 'good' : ev.totalScore >= 35 ? 'fair' : 'poor';
+
+  area.innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="score-badge ${scoreClass}" style="width:72px;height:72px;font-size:22px">${ev.totalScore||0}</div>
+        <div style="flex:1">
+          <div style="font-size:20px;font-weight:800;margin-bottom:4px">${p.name}</div>
+          <div style="color:var(--text3);font-size:13px">${p.sector} · ${p.stage}</div>
+          <div style="margin-top:8px"><span class="decision-badge ${decisionClass(ev.decision)}">${ev.decision||'—'}</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="report-section"><h4>📝 ملخص التقييم</h4><p>${ev.summary||'—'}</p></div>
+    <div class="report-section">
+      <h4>📊 درجات المعايير</h4>
+      <div class="score-breakdown">
+        ${[['الفكرة','idea'],['الفريق','team'],['السوق السعودي','saudiMarket'],['حجم السوق','marketSize'],['التنافسية','competitive'],['الاستثمار','investment'],['احتمالية النجاح','success'],['المخاطر','risk'],['توافق AI','aiAlignment']].map(([l,k])=>`
+        <div class="score-row"><div class="label">${l}</div><div class="bar"><div class="progress-bar"><div class="progress-fill" style="width:${(sc[k]||0)}%"></div></div></div><div class="val">${sc[k]||0}%</div></div>`).join('')}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="report-section"><h4>💪 نقاط القوة</h4><ul>${(ev.strengths||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+      <div class="report-section"><h4>⚠️ نقاط الضعف</h4><ul>${(ev.weaknesses||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="report-section"><h4>🌟 الفرص</h4><ul>${(ev.opportunities||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+      <div class="report-section"><h4>🚧 التحديات</h4><ul>${(ev.challenges||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    </div>
+    <div class="report-section" style="border-color:var(--primary);background:rgba(79,70,229,0.05)"><h4 style="color:var(--primary-light)">💎 التوصيات</h4><ul>${(ev.recommendations||[]).map(s=>`<li>${s}</li>`).join('')}</ul></div>
+    ${renderActionPlanSection(ev.actionPlan, p.id)}
+    <div style="text-align:center;padding:20px;background:var(--bg3);border-radius:var(--radius-sm);margin-top:14px">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px">قرار الاحتضان</div>
+      <span class="decision-badge ${decisionClass(ev.decision)}" style="font-size:16px;padding:10px 28px">${ev.decision||'—'}</span>
+    </div>`;
+}
+
+function studentStartOver() {
+  studentProjectId = null;
+  document.getElementById('studentStep1').style.display = 'block';
+  document.getElementById('studentStep2').style.display = 'none';
+  document.getElementById('studentReportArea').innerHTML = '';
+  // Clear form
+  ['s_name','s_desc','s_problem','s_solution','s_teamExp','s_tech','s_advantage','s_customers','s_revenue','s_prevFunding','s_ask','s_goals'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+}
+
+function openEmailModalForStudent() {
+  if (!studentProjectId) return;
+  openEmailModal(studentProjectId);
+}
+
+// ════════════════════════════════════════════
+//  EDIT PROJECT MODAL
+// ════════════════════════════════════════════
+let editingProjectId = null;
+
+function openEditModal(id) {
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  editingProjectId = id;
+
+  const fields = [
+    ['name','اسم المشروع','input'],['sector','القطاع','input'],['stage','مرحلة المشروع','input'],
+    ['desc','وصف المشروع','textarea'],['problem','المشكلة','textarea'],['solution','الحل','textarea'],
+    ['teamSize','حجم الفريق','input'],['teamExp','خبرة الفريق','textarea'],
+    ['tech','التقنيات','input'],['usesAI','يستخدم AI','input'],['advantage','الميزة التنافسية','input'],
+    ['customers','العملاء','input'],['revenue','الإيرادات','input'],
+    ['prevFunding','التمويل السابق','input'],['ask','المبلغ المطلوب','input'],['goals','الأهداف','textarea'],
+  ];
+
+  document.getElementById('editFormContent').innerHTML = `<div class="form-grid">` +
+    fields.map(([key, label, type]) => `
+      <div class="form-group${type==='textarea'?' full':''}">
+        <label class="form-label">${label}</label>
+        ${type==='textarea'
+          ? `<textarea class="form-textarea" id="edit_${key}" rows="2">${p[key]||''}</textarea>`
+          : `<input class="form-input" id="edit_${key}" value="${(p[key]||'').toString().replace(/"/g,'&quot;')}">`}
+      </div>`).join('') + `</div>`;
+
+  document.getElementById('editModal').style.display = 'block';
+  document.getElementById('editModalInner').scrollTop = 0;
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  editingProjectId = null;
+}
+
+function saveProjectEdit() {
+  const p = projects.find(x => x.id === editingProjectId);
+  if (!p) return;
+
+  const fields = ['name','sector','stage','desc','problem','solution','teamSize','teamExp','tech','usesAI','advantage','customers','revenue','prevFunding','ask','goals'];
+  fields.forEach(key => {
+    const el = document.getElementById('edit_' + key);
+    if (el) p[key] = el.value;
+  });
+
+  save();
+  closeEditModal();
+  renderProjectsTable();
+  renderReports();
+  renderDashboard();
+  toast('تم حفظ التعديلات بنجاح', 'success');
+}
+
+// ════════════════════════════════════════════
+//  EMAIL REPORT
+// ════════════════════════════════════════════
+let emailProjectId = null;
+
+function openEmailModal(id) {
+  emailProjectId = id;
+  const p = projects.find(x => x.id === id);
+  if (p) {
+    document.getElementById('emailSubject').value = `تقرير تقييم مشروع "${p.name}" — حاضنة الذكاء الاصطناعي`;
+  }
+  document.getElementById('emailTo').value = '';
+  document.getElementById('emailNote').value = '';
+  document.getElementById('emailSendStatus').innerHTML = '';
+  document.getElementById('emailSendBtn').disabled = false;
+  document.getElementById('emailModal').style.display = 'block';
+}
+
+function closeEmailModal() {
+  document.getElementById('emailModal').style.display = 'none';
+  emailProjectId = null;
+}
+
+async function sendReportEmail() {
+  const to = document.getElementById('emailTo').value.trim();
+  const subject = document.getElementById('emailSubject').value.trim();
+  const note = document.getElementById('emailNote').value.trim();
+  const statusDiv = document.getElementById('emailSendStatus');
+
+  if (!to || !to.includes('@')) { toast('يرجى إدخال بريد إلكتروني صحيح', 'error'); return; }
+
+  const p = projects.find(x => x.id === emailProjectId);
+  if (!p) return;
+
+  const btn = document.getElementById('emailSendBtn');
+  btn.disabled = true; btn.textContent = '⏳ جارٍ الإرسال...';
+
+  const ev = p.evaluation || {};
+  const body = `السلام عليكم،
+
+${note ? note + '\n\n' : ''}نتائج تقييم مشروعك "${p.name}":
+
+📊 الدرجة الإجمالية: ${ev.totalScore || 0}/100
+🏆 القرار: ${ev.decision || '—'}
+
+ملخص التقييم:
+${ev.summary || '—'}
+
+التوصيات:
+${(ev.recommendations || []).map((r,i) => `${i+1}. ${r}`).join('\n')}
+
+مع تحيات فريق حاضنة أعمال الذكاء الاصطناعي
+كلية الحاسبات وتقنية المعلومات`;
+
+  // Try EmailJS if configured, else show mailto fallback
+  const emailjsKey = settings.emailjsKey || '';
+  const emailjsService = settings.emailjsService || '';
+  const emailjsTemplate = settings.emailjsTemplate || '';
+
+  if (emailjsKey && emailjsService && emailjsTemplate) {
+    try {
+      await loadEmailJS();
+      await emailjs.send(emailjsService, emailjsTemplate, {
+        to_email: to,
+        subject: subject,
+        message: body,
+        project_name: p.name,
+        score: ev.totalScore,
+        decision: ev.decision,
+      }, emailjsKey);
+      statusDiv.innerHTML = `<div class="alert alert-success">✅ تم الإرسال بنجاح إلى ${to}</div>`;
+      btn.textContent = '✅ تم الإرسال';
+    } catch(e) {
+      statusDiv.innerHTML = `<div class="alert alert-danger">❌ فشل الإرسال: ${e.text||e.message}</div>`;
+      btn.disabled = false; btn.textContent = '📤 إرسال';
+    }
+  } else {
+    // Fallback: open mailto
+    const mailto = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailto, '_blank');
+    statusDiv.innerHTML = `<div class="alert alert-info">📬 تم فتح تطبيق البريد. لإرسال تلقائي أضف مفاتيح EmailJS في الإعدادات.</div>`;
+    btn.disabled = false; btn.textContent = '📤 إرسال';
   }
 }
 
