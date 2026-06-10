@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* KAU light theme — IBM Plex Sans Arabic, RTL
+       base #F4F6F9, cards #FFFFFF, KAU green #006633, KAU gold #C9A227 */
+    --background: 213 25% 96%;
+    --foreground: 215 28% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 15%;
+    --primary: 150 100% 20%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 22% 93%;
+    --secondary-foreground: 215 28% 15%;
+    --muted: 210 20% 92%;
+    --muted-foreground: 215 14% 42%;
+    --accent: 46 69% 47%;
+    --accent-foreground: 152 100% 10%;
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 18% 87%;
+    --input: 214 18% 84%;
+    --ring: 150 100% 20%;
+    --radius: 0.375rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    direction: rtl;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+    font-size: 14px;
+  }
+  @media print {
+    body { background: #fff; }
+    main { padding: 0 !important; }
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--background)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+}
