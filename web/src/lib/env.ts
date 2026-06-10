@@ -5,7 +5,8 @@ const schema = z.object({
   DATABASE_URL: z.string().url(),
   BETTER_AUTH_SECRET: z.string().min(16),
   BETTER_AUTH_URL: z.string().url().default('http://localhost:3000'),
-  ANTHROPIC_API_KEY: z.string().min(1).optional(),
+  // Optional until Phase 2; treat an empty value in .env as unset.
+  ANTHROPIC_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(1).optional()),
 });
 
 const parsed = schema.safeParse(process.env);
