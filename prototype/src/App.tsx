@@ -8,10 +8,13 @@ import Projects from '@/views/Projects';
 import Report from '@/views/Report';
 import Admin from '@/views/Admin';
 import NewProject from '@/views/NewProject';
+import Rankings from '@/views/Rankings';
+import Compare from '@/views/Compare';
+import Import from '@/views/Import';
 import { PROJECTS, ROLE_LABEL, type Role, type User } from '@/data';
-import { LayoutDashboard, FolderOpen, Settings, LogOut, Sparkles, FileText, Home, ArrowRight } from 'lucide-react';
+import { LayoutDashboard, FolderOpen, Settings, LogOut, Sparkles, FileText, Home, ArrowRight, Trophy, GitCompare, FileSpreadsheet } from 'lucide-react';
 
-type View = 'dashboard' | 'projects' | 'report' | 'admin' | 'my-project' | 'new-project';
+type View = 'dashboard' | 'projects' | 'report' | 'admin' | 'my-project' | 'new-project' | 'rankings' | 'compare' | 'import';
 
 const KAU_GOLD = '#C9A227';
 const KAU_DARK = '#004D26';
@@ -19,6 +22,9 @@ const KAU_DARK = '#004D26';
 const NAV: { id: View; label: string; icon: typeof LayoutDashboard; roles: Role[] }[] = [
   { id: 'dashboard', label: 'لوحة التحكم', icon: LayoutDashboard, roles: ['admin', 'evaluator', 'investor'] },
   { id: 'projects', label: 'المشاريع', icon: FolderOpen, roles: ['admin', 'evaluator', 'investor'] },
+  { id: 'rankings', label: 'التصنيفات', icon: Trophy, roles: ['admin', 'evaluator', 'investor'] },
+  { id: 'compare', label: 'المقارنة', icon: GitCompare, roles: ['admin', 'evaluator', 'investor'] },
+  { id: 'import', label: 'استيراد Excel', icon: FileSpreadsheet, roles: ['admin', 'evaluator'] },
   { id: 'my-project', label: 'مشروعي', icon: FileText, roles: ['student'] },
   { id: 'admin', label: 'الإدارة', icon: Settings, roles: ['admin'] },
 ];
@@ -37,6 +43,9 @@ const TITLES: Record<View, { t: string; s: string }> = {
   admin: { t: 'الإدارة', s: 'المستخدمون والدعوات وإعدادات النظام' },
   'my-project': { t: 'مشروعي', s: 'حالة مشروعك ونتيجة التقييم' },
   'new-project': { t: 'إضافة مشروع جديد', s: 'أدخل بيانات المشروع للحصول على تقييم ذكي' },
+  rankings: { t: 'التصنيفات والترتيب', s: 'ترتيب المشاريع حسب معايير مختلفة' },
+  compare: { t: 'مقارنة المشاريع', s: 'مقارنة تفصيلية مع توصيات الاستثمار' },
+  import: { t: 'استيراد من Excel', s: 'ارفع ملفاً ليقرأه Claude ويستخرج المشاريع تلقائياً' },
 };
 
 export default function App() {
@@ -156,6 +165,9 @@ export default function App() {
           {view === 'projects' && <Projects role={user.role} openReport={openReport} onNew={() => go('new-project')} />}
           {view === 'report' && <Report id={reportId} role={user.role} back={goBack} />}
           {view === 'new-project' && <NewProject onCreated={openReport} />}
+          {view === 'rankings' && <Rankings openReport={openReport} />}
+          {view === 'compare' && <Compare openReport={openReport} />}
+          {view === 'import' && <Import onDone={() => go('projects')} />}
           {view === 'admin' && <Admin />}
           {view === 'my-project' &&
             (myProject ? (
