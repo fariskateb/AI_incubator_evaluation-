@@ -7,6 +7,9 @@ const schema = z.object({
   BETTER_AUTH_URL: z.string().url().default('http://localhost:3000'),
   // Optional until Phase 2; treat an empty value in .env as unset.
   ANTHROPIC_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(1).optional()),
+  // Optional — Resend email. When unset, report emails degrade gracefully.
+  RESEND_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(1).optional()),
+  RESEND_FROM: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
 });
 
 const parsed = schema.safeParse(process.env);

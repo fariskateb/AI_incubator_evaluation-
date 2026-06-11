@@ -6,6 +6,7 @@ import { requireSession } from '@/lib/session';
 import { PageHeader } from '@/components/page-header';
 import { Card, DecisionBadge, scoreTone } from '@/components/ui';
 import { EvaluateButton } from './EvaluateButton';
+import { EmailButton } from './EmailButton';
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -24,6 +25,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   const canEvaluate =
     user.role === 'admin' || user.role === 'evaluator' || (user.role === 'student' && row.ownerId === user.id);
+  const canEmail = (user.role === 'admin' || user.role === 'evaluator') && !!latest;
 
   const details: [string, string | null | undefined][] = [
     ['القطاع', row.sector], ['المرحلة', row.stage],
@@ -38,7 +40,12 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
       <PageHeader
         title={row.name}
         subtitle={`${row.code} · ${row.status}`}
-        action={canEvaluate ? <EvaluateButton projectId={id} label={latest ? 'إعادة التقييم' : 'تقييم بالذكاء الاصطناعي'} /> : undefined}
+        action={
+          <div className="flex items-start gap-2">
+            {canEmail && <EmailButton projectId={id} />}
+            {canEvaluate && <EvaluateButton projectId={id} label={latest ? 'إعادة التقييم' : 'تقييم بالذكاء الاصطناعي'} />}
+          </div>
+        }
       />
       <div className="p-6 max-w-3xl space-y-4">
         {latest ? (

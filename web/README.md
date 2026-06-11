@@ -54,7 +54,41 @@ Email/password only, **invite-only** in the UI. Roles (`admin`, `evaluator`,
 `investor`, `student`) live on the user row and are **enforced server-side** via
 `requireRole(...)` in every protected handler — never trusted from the client.
 
-## Next (Phase 1+)
+## Features (Phases 0–3)
 
-Login/invite UI, admin user management, project CRUD, server-side Claude
-evaluation, and the dashboard — porting the screens from `prototype/`.
+- **Auth & RBAC** — better-auth email/password, four roles enforced server-side.
+- **Projects** — CRUD, student self-submission, admin/evaluator management.
+- **AI evaluation** — `claude-opus-4-8` via forced tool use produces structured
+  scores/decision/strengths/weaknesses/recommendations + action plan; heuristic
+  fallback when the key is absent. Report page renders it all.
+- **Excel import** — upload xlsx/csv → `claude-haiku-4-5` extracts project rows →
+  review → bulk insert.
+- **Dashboard** — live decision donut + per-sector averages.
+- **Report email** — Resend (optional; degrades gracefully when unconfigured).
+- **Admin** — user management, audit log on every mutation.
+
+## Deploying to Vercel
+
+This app lives in the `web/` subdirectory of the repo.
+
+1. **Push** the branch to GitHub.
+2. In Vercel: **New Project → import the repo**, and set **Root Directory = `web`**
+   (critical — the project is not at the repo root). Framework auto-detects as
+   Next.js; no `vercel.json` needed.
+3. **Environment variables** (Project → Settings → Environment Variables) — add the
+   same keys as `.env.local`:
+   - `DATABASE_URL` — your Neon **pooled** connection string
+   - `BETTER_AUTH_SECRET` — `openssl rand -base64 32`
+   - `BETTER_AUTH_URL` — your production URL, e.g. `https://your-app.vercel.app`
+   - `ANTHROPIC_API_KEY`
+   - `RESEND_API_KEY` + `RESEND_FROM` (optional)
+   - `SEED_ADMIN_*` (only if you run the seed against prod)
+4. **Trusted origin** — add your production URL to `trustedOrigins` in
+   [src/lib/auth.ts](src/lib/auth.ts) so sign-in passes the origin check.
+5. **Migrate prod** — run `pnpm db:migrate` locally against the prod
+   `DATABASE_URL` (or use Neon branching), then `pnpm db:seed` once for the admin.
+6. **Deploy.** Vercel builds with Turbopack; `/api/health` should return
+   `{ status: "ok", db: "connected" }`.
+
+> Neon also offers a native Vercel integration that injects `DATABASE_URL`
+> automatically — optional, the manual variable works fine.

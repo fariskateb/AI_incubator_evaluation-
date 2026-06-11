@@ -1,43 +1,44 @@
-import { db } from '@/db';
-import { project, evaluation } from '@/db/schema';
-import { isNull, sql } from 'drizzle-orm';
 import { requireSession } from '@/lib/session';
+import { getDashboardStats } from '@/lib/stats';
 import { PageHeader } from '@/components/page-header';
 import { Card } from '@/components/ui';
+import { DecisionDonut, SectorBars } from '@/components/charts';
 
 export default async function DashboardPage() {
   await requireSession(['admin', 'evaluator', 'investor']);
+  const stats = await getDashboardStats();
 
-  const [{ total }] = await db
-    .select({ total: sql<number>`count(*)::int` })
-    .from(project)
-    .where(isNull(project.deletedAt));
-
-  const [{ evaluated }] = await db
-    .select({ evaluated: sql<number>`count(distinct ${evaluation.projectId})::int` })
-    .from(evaluation);
-
-  const stats = [
-    { label: 'إجمالي المشاريع', value: total },
-    { label: 'مشاريع مُقيَّمة', value: evaluated },
-    { label: 'بانتظار التقييم', value: Math.max(0, total - evaluated) },
+  const cards = [
+    { label: 'إجمالي المشاريع', value: stats.total, sub: 'الدفعة الحالية' },
+    { label: 'مشاريع مُقيَّمة', value: stats.evaluated, sub: 'بتقييم الذكاء الاصطناعي' },
+    { label: 'متوسط الدرجات', value: stats.avgScore, sub: 'من 100' },
+    { label: 'بانتظار التقييم', value: stats.pending, sub: 'لم تُقيَّم بعد' },
   ];
 
   return (
     <>
       <PageHeader title="لوحة التحكم" subtitle="نظرة عامة على مشاريع الحاضنة" />
-      <div className="p-6">
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {stats.map((s) => (
-            <Card key={s.label} className="p-5">
-              <div className="text-xs text-[var(--muted-foreground)] mb-1">{s.label}</div>
-              <div className="text-3xl font-bold">{s.value}</div>
+      <div className="p-6 space-y-6">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          {cards.map((c) => (
+            <Card key={c.label} className="p-5">
+              <div className="text-xs text-[var(--muted-foreground)] mb-1">{c.label}</div>
+              <div className="text-3xl font-bold">{c.value}</div>
+              <div className="text-[11px] text-[var(--muted-foreground)] mt-0.5">{c.sub}</div>
             </Card>
           ))}
         </div>
-        <p className="text-sm text-[var(--muted-foreground)] mt-6">
-          البيانات أعلاه حيّة من قاعدة بيانات Neon. أضف مشاريع من صفحة المشاريع لرؤية الأرقام تتغير.
-        </p>
+
+        <div className="grid lg:grid-cols-2 gap-4">
+          <Card className="p-6">
+            <h2 className="text-sm font-semibold mb-4">توزيع قرارات الاحتضان</h2>
+            <DecisionDonut decisions={stats.decisions} />
+          </Card>
+          <Card className="p-6">
+            <h2 className="text-sm font-semibold mb-4">متوسط الدرجات حسب القطاع</h2>
+            <SectorBars sectors={stats.sectors} />
+          </Card>
+        </div>
       </div>
     </>
   );

@@ -12,6 +12,7 @@ const KAU_GOLD = '#C9A227';
 const NAV: { href: string; label: string; roles: Role[] }[] = [
   { href: '/dashboard', label: 'لوحة التحكم', roles: ['admin', 'evaluator', 'investor'] },
   { href: '/projects', label: 'المشاريع', roles: ['admin', 'evaluator', 'investor'] },
+  { href: '/import', label: 'استيراد Excel', roles: ['admin', 'evaluator'] },
   { href: '/my-project', label: 'مشروعي', roles: ['student'] },
   { href: '/admin/users', label: 'إدارة المستخدمين', roles: ['admin'] },
 ];

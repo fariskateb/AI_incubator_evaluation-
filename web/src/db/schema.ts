@@ -144,6 +144,17 @@ export const appSettings = pgTable('app_settings', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+export const emailLog = pgTable('email_log', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  projectId: uuid('project_id').references(() => project.id, { onDelete: 'cascade' }),
+  toEmail: text('to_email').notNull(),
+  subject: text('subject').notNull(),
+  status: text('status').notNull(),
+  providerId: text('provider_id'),
+  createdBy: text('created_by').references(() => user.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
 export type User = typeof user.$inferSelect;
 export type Project = typeof project.$inferSelect;
 export type Evaluation = typeof evaluation.$inferSelect;
