@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "web", "dev", "--port", "3100"],
       "port": 3100
+    },
+    {
+      "name": "prototype",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "prototype", "dev", "--port", "5199", "--strictPort"],
+      "port": 5199
     }
   ]
 }
